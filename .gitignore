@@ -1,6 +1,4 @@
 NERD*
-spikes_record
-spikes_record/*.txt
 .DS_Store
 *.py[co]
 *.swp

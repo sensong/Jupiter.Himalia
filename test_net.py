@@ -3,10 +3,10 @@ from Stimulator import Current_Poisson_Stimulator as Noise
 from Stimulator import Current_Poisson_Pool as Inhibitory_Pool
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.Simulation as simpy
-import matplotlib.pyplot as plot
+import SimPy.SimulationTrace as simpy
+#import matplotlib.pyplot as plot
 import random
-import numpy
+#import numpy
 
 ex_settings = {}
 ex_settings['reset_potential'] = -70.0
@@ -32,7 +32,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -35.0
+in_settings['output_current_peak'] = -25.4
 
 ds_settings = {}
 ds_settings['reset_potential'] = -70.0
@@ -98,14 +98,13 @@ for i in range(801):
 
 
 all_neuron = excitatory_a + excitatory_b + inhibitory + downstream + noise
-duration = 600
+duration = 2400
 
 
 for i in range(duration):
     for neuron in all_neuron:
         event = Event(name = 'update')
         simpy.activate(event, event.update(neuron), delay = i)
-
 print("simulation scheduled.")
 
 simpy.simulate(until = duration+0.0)
