@@ -50,24 +50,23 @@ for i in range(99):
         inhib_corr = []
 
         for bin_size in bin_ops:
-            if bin_size > len(raw_inhib_a):
-                break
             no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 
             inhib_corr.append(calculate_corr(raw_inhib_a, raw_inhib_b, bin_size)) 
 
-        limlen = 11
+        limlen = len(bin_ops)
         for k in range(limlen):
             avg_no_inhib_corr[k] += no_inhib_corr[k]
-            if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
+        if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
+            for k in range(limlen):
                 avg_inhib_corr[k] += inhib_corr[k]
-                inhib_total += 1.0
+            inhib_total += 1.0
 
 
 
 print(total, inhib_total)
 
 for i in range(len(bin_ops)):
-    avg_inhib_corr[i] /= (inhib_total/limlen)
+    avg_inhib_corr[i] /= inhib_total
     avg_no_inhib_corr[i] /= total
 
 stat_net_result_no_in = open('stat_net_result_no_in.txt', 'w')
