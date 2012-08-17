@@ -1,0 +1,3 @@
+[submodule "Jupiter.Ecliptic"]
+	path = Jupiter/Ecliptic
+	url = git@github.com:Skylersun/Jupiter.Ecliptic.git
