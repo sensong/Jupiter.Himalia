@@ -1,39 +1,41 @@
+from __future__ import division
 import math
 import SimPy.Simulation as simpy
 
 from Jupiter.Ecliptic.Neuron import Neuron
 
-class STDP_Neuron(Neuron):
-    def __init__(self, domain, index, settings_dict, STDP = 'on'):
-        #settings_dict['rest_potential'] = 0
-        #settings_dict['action_potential'] = 1
-        #settings_dict['threshold'] = 0.3
-        #settings_dict['left_window_constant'] = (t+)
-        #settings_dict['right_window_constant'] = (t-)
-        #settings_dict['learning_rate'] = learning_rate(A+)
-        #settings_dict['stability'] = stability(B)
-        #settings_dict['max_weight'] = max_weight
+class LIF_STDP_Neuron(Neuron):
+    def __init__(self, domain, index, settings, STDP='on'):
+        #settings['reset_potential'] = -70
+        #settings['spike_potential'] = 0
+        #settings['threshold'] = -54
+        #settings['left_window_constant'] = (t+)
+        #settings['right_window_constant'] = (t-)
+        #settings['learning_rate'] = learning_rate (A+)
+        #settings['stability'] = stability (B)
+        #settings['weight_ceiling'] = weight_ceiling
 
         Neuron.__init__(self, domain, index)
         #simpy.Process.__init__(self, name = str(self))
         self.STDP = STDP
-        self.rest_potential = settings_dict['rest_potential'] 
-        self.spike_potential = settings_dict['action_potential']
-        self.threshold = settings_dict['threshold']
-        self.max_weight = settings_dict['max_weight']
+        self.reset_potential = settings['reset_potential'] 
+        self.spike_potential = settings['spike_potential']
+        self.threshold = settings['threshold']
+        self.weight_ceiling = settings['weight_ceiling']
 
-        self.stability = settings_dict["stability"]
-        self.left_window_constant = settings_dict["left_window_constant"]
-        self.left_learning_rate = settings_dict['learning_rate']
+        self.stability = settings["stability"]
+        self.left_window_constant = settings["left_window_constant"]
+        self.left_learning_rate = settings['learning_rate']
         self.left_window_width = abs(math.log(0.01) * self.left_window_constant)
-        self.right_window_constant = settings_dict["right_window_constant"]
+        self.right_window_constant = settings["right_window_constant"]
         self.right_window_width = abs(math.log(0.01) * self.right_window_constant)
         self.right_learning_rate = self.left_learning_rate * self.left_window_width * self.stability / self.right_window_width
 
-        self.membrane_potential = self.rest_potential
+        self.membrane_potential = self.reset_potential
         self.left_window = []
         self.right_window = []
-        
+        self.refact = 'no'
+
         self.last_firing_time = -1
         self.spikes_number = 0
         self.spikes_record = []
@@ -41,11 +43,14 @@ class STDP_Neuron(Neuron):
 
     def fire(self):
         #reset membrane potential
-        self.membrane_potential = self.rest_potential 
+        self.membrane_potential = self.reset_potential 
+        self.refact = 'yes'
+        event = Event(name = 'reactivate')
+        simpy.activate(event, event.reactivate(self), delay = 5.0, prior=True)
         
         #print(simpy.now(), ":", str(self), "fire")
         self.spikes_number += 1
-        self.spikes_record.append(simpy.now())
+        #self.spikes_record.append(simpy.now())
         current_time = simpy.now() 
         
         #strengthen each source in current left window
@@ -94,22 +99,48 @@ class STDP_Neuron(Neuron):
 
 
     def adjust_weight(self, source, time_difference): #time_difference = t_pre - t_post
-        if time_difference < 0 and self.dendrites[source] < self.max_weight and (self.STDP == "on" or self.STDP == "left_only"):
+        if time_difference < 0 and self.dendrites[source] < self.weight_ceiling and (self.STDP == "on" or self.STDP == "left_only"):
             delta = self.dendrites[source]
-            self.dendrites[source] += self.max_weight * self.left_learning_rate * math.exp( time_difference / self.left_window_constant)
-            if self.dendrites[source] > self.max_weight:
-                self.dendrites[source] = self.max_weight
+            self.dendrites[source] += self.weight_ceiling * self.left_learning_rate * math.exp( time_difference / self.left_window_constant)
+            if self.dendrites[source] > self.weight_ceiling:
+                self.dendrites[source] = self.weight_ceiling
             delta = self.dendrites[source] - delta
             self.weights_record.append([simpy.now(), source, delta])
             #print(simpy.now(), ":", "increse", str(source), "->", str(self), "to", self.dendrites[source])
         elif time_difference >= 0 and self.dendrites[source] > 0 and (self.STDP == "on" or self.STDP == "right_only") and self.dendrites[source] < 256:
             delta = self.dendrites[source]
-            self.dendrites[source] -= self.max_weight * self.right_learning_rate * math.exp( -time_difference / self.right_window_constant)
+            self.dendrites[source] -= self.weight_ceiling * self.right_learning_rate * math.exp( -time_difference / self.right_window_constant)
             if self.dendrites[source] < 0:
                 self.dendrites[source] = 0
             delta = self.dendrites[source] - delta
             self.weights_record.append([simpy.now(), source, delta])
             #print(simpy.now(), ":", "increse", str(source), "->", str(self), "to", self.dendrites[source])
+
+    def update(self, now):
+        #print(self.membrane_potential)
+        if self.refact == 'yes':
+            self.spikes_record.append(self.membrane_potential)
+            return
+        self.membrane_potential -= (self.membrane_potential - self.reset_potential)*0.1  #leak
+        input = 0.0
+        for source in self.dendrites.keys():
+            if source.type == 'current':
+                input += source.value
+            elif source.type == 'voltage':
+                pass # Voltage type input, add code here
+        self.membrane_potential += input * 0.1
+        if self.membrane_potential < self.reset_potential:
+            self.membrane_potential = self.reset_potential
+        record = self.membrane_potential
+        if self.membrane_potential >= self.threshold:
+            if simpy.now() > self.last_firing_time:
+                self.last_firing_time = simpy.now()
+                event = Event(name = str(self) + " fire")
+                simpy.activate(event, event.fire(self), delay = 0.0)
+                record = self.spike_potential
+        self.spikes_record.append(record)
+
+        
 
     def weights_trend(self, dendrites_set, initial_sum_weight):
         accumulator = initial_sum_weight
@@ -123,12 +154,20 @@ class STDP_Neuron(Neuron):
 
 
 class Event(simpy.Process):
+    def update(self, subject):
+        subject.update(simpy.now())
+        yield simpy.passivate, self
+
     def fire(self, subject):
         subject.fire()
         yield simpy.passivate, self
 
     def receive(self, target, source, time):
         target.receive(source, time)
+        yield simpy.passivate, self
+        
+    def reactivate(self, target):
+        target.refact = 'no'
         yield simpy.passivate, self
 
     def close_a_right_window(self, subject, window) :
