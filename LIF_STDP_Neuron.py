@@ -14,14 +14,22 @@ class LIF_STDP_Neuron(Neuron):
         #settings['learning_rate'] = learning_rate (A+)
         #settings['stability'] = stability (B)
         #settings['weight_ceiling'] = weight_ceiling
+        #settings['type'] = 'current' or 'voltage'
+        #settings['output_current_decay'] = 3.0 (only need if type is current)
+        #settings['output_current_peak'] = 2.2 (only need if type is current)
 
         Neuron.__init__(self, domain, index)
-        #simpy.Process.__init__(self, name = str(self))
         self.STDP = STDP
         self.reset_potential = settings['reset_potential'] 
         self.spike_potential = settings['spike_potential']
         self.threshold = settings['threshold']
         self.weight_ceiling = settings['weight_ceiling']
+
+        self.type = settings['type']
+        if self.type == 'current':
+            self.output_current_peak = settings['output_current_peak']
+            self.output_current_decay = 1.0-1.0/settings['output_current_decay']
+            self.value = 0.0
 
         self.stability = settings["stability"]
         self.left_window_constant = settings["left_window_constant"]
@@ -36,14 +44,18 @@ class LIF_STDP_Neuron(Neuron):
         self.right_window = []
         self.refact = 'no'
 
+
         self.last_firing_time = -1
         self.spikes_number = 0
         self.spikes_record = []
+        self.value_record = []
         self.weights_record = []
 
     def fire(self):
         #reset membrane potential
         self.membrane_potential = self.reset_potential 
+        if self.type == 'current':
+            self.value = self.output_current_peak
         self.refact = 'yes'
         event = Event(name = 'reactivate')
         simpy.activate(event, event.reactivate(self), delay = 5.0, prior=True)
@@ -75,7 +87,7 @@ class LIF_STDP_Neuron(Neuron):
 
         #increse membrane potential
         membrane_potential_increment = self.dendrites[source]
-        self.membrane_potential += membrane_potential_increment
+        #self.membrane_potential += membrane_potential_increment
         
         #insert the source into the left window
         left_window_item = [source, pre_spike_time, simpy.now()]
@@ -118,6 +130,9 @@ class LIF_STDP_Neuron(Neuron):
 
     def update(self, now):
         #print(self.membrane_potential)
+        if self.type == 'current':
+            self.value_record.append(self.value)
+            self.value *= self.output_current_decay
         if self.refact == 'yes':
             self.spikes_record.append(self.membrane_potential)
             return

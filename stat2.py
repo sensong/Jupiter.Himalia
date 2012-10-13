@@ -29,16 +29,16 @@ def calculate_corr(a, b, bin_size):
     temp_b = split_into_bins(b, bin_size)
     return pearsonr(temp_a, temp_b)
 
-raw_inhib_a = [float(line) for line in open('inhib_a.txt', 'r')]
-raw_inhib_b = [float(line) for line in open('inhib_b.txt', 'r')]
-raw_no_inhib_a = [float(line) for line in open('no_inhib_a.txt', 'r')]
-raw_no_inhib_b = [float(line) for line in open('no_inhib_b.txt', 'r')]
+raw_inhib_a = [float(line) for line in open('a_inhib_on.txt', 'r')]
+raw_inhib_b = [float(line) for line in open('b_inhib_on.txt', 'r')]
+raw_no_inhib_a = [float(line) for line in open('a_inhib_off.txt', 'r')]
+raw_no_inhib_b = [float(line) for line in open('b_inhib_off.txt', 'r')]
 
 no_inhib_corr = []
 inhib_corr = []
 
 
-bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
+bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400]#, 600, 800, 1000]
 x = range(len(bin_ops))
 for bin_size in bin_ops:
    no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 

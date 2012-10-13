@@ -3,15 +3,20 @@ import random
 import math
 
 class Constant_Stimulator(Neuron):
-    def __init__(self, domain, index, type, value):
+    def __init__(self, domain, index, type, value, decay_time = 0.0):
         Neuron.__init__(self, domain, index)
         self.type = type
+        self.decay_time = decay_time
         if self.type == 'current':
             self.value = value
         elif self.type == 'voltage':
             self.V_membrane = value
     def update(self, now):
-        pass
+        if self.decay_time > 0.0:
+            if self.type == 'current':
+                self.value *= 1.0-1.0/self.decay_time
+            elif self.type == 'voltage':
+                self.V_membrane *= 1.0-1.0/self.decay_time
 
 class Current_Poisson_Stimulator(Neuron):
     def __init__(self, domain, index, freq, scale, decay):
