@@ -18,6 +18,7 @@ settings['right_window_constant'] = 20#(t-)
 settings['learning_rate'] = 0.05# (A+)
 settings['stability'] = 1.05# (B)
 settings['weight_ceiling'] = 1.0
+settings['type'] = 'voltage'
 c = 0.7
 unshared_pool_settings = {'alpha':2.5, 'k':1, 'a':0.4, 'b':30, 'c':c, 'd':-3.5}
 shared_pool_settings = {'alpha':2.5, 'k':1, 'a':0.75, 'b':65, 'c':1-c, 'd':-5}
@@ -38,14 +39,14 @@ noise_b_neg = Noise('noise', 3, 100, -noise_intensy, 3.0)
 
 set = [pool_a, pool_b, shared_pool, current_a, current_b, neuron_a, neuron_b, noise_a_pos, noise_a_neg, noise_b_pos, noise_b_neg]
 
-#pool_a.connect(neuron_a)
-#neuron_a.connect(pool_a)
-#pool_b.connect(neuron_b)
-#neuron_b.connect(pool_b)
-#shared_pool.connect(neuron_a)
-#shared_pool.connect(neuron_b)
-#neuron_a.connect(shared_pool)
-#neuron_b.connect(shared_pool)
+pool_a.connect(neuron_a)
+neuron_a.connect(pool_a)
+pool_b.connect(neuron_b)
+neuron_b.connect(pool_b)
+shared_pool.connect(neuron_a)
+shared_pool.connect(neuron_b)
+neuron_a.connect(shared_pool)
+neuron_b.connect(shared_pool)
 
 current_a.connect(neuron_a)
 current_b.connect(neuron_b)
@@ -55,28 +56,32 @@ noise_a_neg.connect(neuron_a)
 noise_b_pos.connect(neuron_b)
 noise_b_neg.connect(neuron_b)
 
-for i in range(10000):
+for i in range(1000):
     for neuron in set:
         event = Event(name = 'update')
         simpy.activate(event, event.update(neuron), delay = i)
 
-simpy.simulate(until = 10000.0)
+simpy.simulate(until = 1000.0)
 
-print(len(neuron_a.spikes_record), len(neuron_b.spikes_record))
-outfile_a = open('no_inhib_a.txt', 'w')
-#outfile_a = open('inhib_a.txt', 'w')
-for i in neuron_a.spikes_record:
-    outfile_a.write(str(i)+'\n')
+#print(len(neuron_a.spikes_record), len(neuron_b.spikes_record))
+#outfile_a = open('no_inhib_a.txt', 'w')
+##outfile_a = open('inhib_a.txt', 'w')
+#for i in neuron_a.spikes_record:
+    #outfile_a.write(str(i)+'\n')
 
-outfile_b = open('no_inhib_b.txt', 'w')
-#outfile_b = open('inhib_b.txt', 'w')
-for i in neuron_b.spikes_record:
-    outfile_b.write(str(i)+'\n')
-    
-#x = list(range(len(neuron_a.spikes_record)))
-#plot.plot(x, neuron_a.spikes_record, x, neuron_b.spikes_record)
-#plot.plot(x, shared_pool.spikes_record)
-#plot.show()
+#outfile_b = open('no_inhib_b.txt', 'w')
+##outfile_b = open('inhib_b.txt', 'w')
+#for i in neuron_b.spikes_record:
+    #outfile_b.write(str(i)+'\n')
+
+inh = []
+for i in range(len(pool_a.spikes_record)):
+    inh.append(pool_a.spikes_record[i]+shared_pool.spikes_record[i])
+
+x = list(range(len(inh)))
+plot.plot(x, neuron_a.spikes_record, x, neuron_b.spikes_record)
+plot.plot(x, inh)
+plot.show()
 
 
 
