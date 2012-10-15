@@ -32,7 +32,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -25.4
+in_settings['output_current_peak'] = -55.4
 
 ds_settings = {}
 ds_settings['reset_potential'] = -70.0
