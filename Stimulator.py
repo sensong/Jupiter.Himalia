@@ -55,6 +55,7 @@ class Current_Poisson_Pool(Neuron):
         self.value = 0.0
 
         self.spikes_record = []
+        self.freq_record = []
     
     def receive(self, source, pre_spike_time):
         self.pre_spike_time.append(pre_spike_time)
@@ -73,6 +74,7 @@ class Current_Poisson_Pool(Neuron):
         P_conv = math.tanh(P_conv) + 1.0
         P_conv *= self.alpha/2.0
         self.freq = P_conv * self.c
+        self.freq_record.append(self.freq)
         self.value *= self.decay
         if random.random() < self.freq:   #spike
             self.value += self.scale

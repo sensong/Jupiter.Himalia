@@ -55,7 +55,7 @@ class LIF_STDP_Neuron(Neuron):
         #reset membrane potential
         self.membrane_potential = self.reset_potential 
         if self.type == 'current':
-            self.value = self.output_current_peak
+            self.value += self.output_current_peak
         self.refact = 'yes'
         event = Event(name = 'reactivate')
         simpy.activate(event, event.reactivate(self), delay = 5.0, prior=True)

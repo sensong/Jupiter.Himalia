@@ -4,9 +4,9 @@ from Stimulator import Current_Poisson_Pool as Inhibitory_Pool
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.SimulationTrace as simpy
-#import matplotlib.pyplot as plot
 import random
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 
 ex_settings = {}
 ex_settings['reset_potential'] = -70.0
@@ -19,12 +19,12 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 10.36
+ex_settings['output_current_peak'] = 10.0
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
 in_settings['spike_potential'] = 0
-in_settings['threshold'] = -54.0
+in_settings['threshold'] = -64.0
 in_settings['left_window_constant'] = 20#(t+)
 in_settings['right_window_constant'] = 20#(t-)
 in_settings['learning_rate'] = 0.05# (A+)
@@ -32,7 +32,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -55.4
+in_settings['output_current_peak'] = -0.5
 
 ds_settings = {}
 ds_settings['reset_potential'] = -70.0
@@ -82,11 +82,11 @@ for i in range(99):
     else:
         observer_b.append(neuron_producing)
 
-for i in range(99):
-    neuron_producing = Neuron('downstream', i, ds_settings, 'off')
-    downstream.append(neuron_producing)
-    for observee in random.sample(excitatory_a+excitatory_b, 20):
-        observee.connect(neuron_producing)
+#for i in range(99):
+    #neuron_producing = Neuron('downstream', i, ds_settings, 'off')
+    #downstream.append(neuron_producing)
+    #for observee in random.sample(excitatory_a+excitatory_b, 20):
+        #observee.connect(neuron_producing)
 
 for i in range(801):
     neuron_producing = Neuron('inhibitory', i, in_settings, 'off')
@@ -98,7 +98,7 @@ for i in range(801):
 
 
 all_neuron = excitatory_a + excitatory_b + inhibitory + downstream + noise
-duration = 2400
+duration = 600
 
 
 for i in range(duration):
@@ -127,25 +127,23 @@ for i in range(99):
     outfile.close()
 
 
-    
-#valen = len(inhibitory[1].value_record)
-#va = [0.0] * valen 
-#for j in range(99):
-    #for inh in (excitatory_a+excitatory_b)[j].dendrites.keys():
-        #if inh in inhibitory:
-            #for i in range(valen):
-                #va[i] += inh.value_record[i]
-#for i in range(valen):
-    #va[i] /= 99.0
+exit()
+x = list(range(len(excitatory_a[1].value_record)))
+
+valen = len(inhibitory[1].value_record)
+va = [0.0] * valen 
+for inh in (excitatory_a+excitatory_b)[1].dendrites.keys():
+    if inh in inhibitory:
+        for i in range(valen):
+            va[i] += inh.value_record[i]
+
+plot.plot(x, va)
+plot.plot(x, excitatory_a[1].value_record)
+plot.plot(x, excitatory_a[1].spikes_record, '.-')
 
 
-#x = list(range(valen))
-#plot.plot(x, va)
-#plot.show()
 
-#x = list(range(len(excitatory_a[1].value_record)))
-#plot.plot(x, excitatory_a[1].value_record)
-#plot.show()
+plot.show()
 
 
 

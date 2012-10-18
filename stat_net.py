@@ -29,7 +29,7 @@ def calculate_corr(a, b, bin_size):
     temp_b = split_into_bins(b, bin_size)
     return pearsonr(temp_a, temp_b)
 
-bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200]#, 400, 600]#, 800, 1000]
+bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600]#, 800, 1000]
 
 avg_inhib_corr = [0.0] * len(bin_ops)
 avg_no_inhib_corr = [0.0] * len(bin_ops)
