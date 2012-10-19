@@ -34,8 +34,8 @@ bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 avg_inhib_corr = [0.0] * len(bin_ops)
 avg_no_inhib_corr = [0.0] * len(bin_ops)
 total = 0.0
-for i in range(99):
-    for j in range(i+1, 99):
+for i in range(49):
+    for j in range(i+1, 49):
         total += 1.0
         print(i, j)
         raw_inhib_a = [float(line) for line in open('spikes_record/'+str(i)+'_inhib_on.txt', 'r')]

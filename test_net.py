@@ -3,7 +3,7 @@ from Stimulator import Current_Poisson_Stimulator as Noise
 from Stimulator import Current_Poisson_Pool as Inhibitory_Pool
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.Simulation as simpy
+import SimPy.SimulationTrace as simpy
 import random
 #import matplotlib.pyplot as plot
 #import numpy
@@ -69,7 +69,7 @@ source_b = Current('source', 1, 'current', 21.5)
 
 
 
-for i in range(99):
+for i in range(49):
     neuron_producing = Neuron('excitatory', i, ex_settings, 'off')
     noise_pos = Noise('noise', i, 100, noise_intensy, 3.0)
     noise_neg = Noise('noise', i, 100, -noise_intensy, 3.0)
@@ -95,17 +95,17 @@ for i in range(99):
     #for observee in random.sample(excitatory_a+excitatory_b, 20):
         #observee.connect(neuron_producing)
 
-for i in range(801):
+for i in range(401):
     neuron_producing = Neuron('inhibitory', i, in_settings, 'off')
     if inhi == 'on':
         inhibitory.append(neuron_producing)
-        for inhibitee in random.sample(excitatory_a+excitatory_b, 20):
+        for inhibitee in random.sample(excitatory_a+excitatory_b, 10):
             inhibitee.connect(neuron_producing)
             neuron_producing.connect(inhibitee)
 
 
 all_neuron = excitatory_a + excitatory_b + inhibitory + downstream + noise
-duration = 2000
+duration = 4000
 
 
 for i in range(duration):
@@ -133,7 +133,7 @@ if is_continue:
     file_op = 'a'
 
 
-for i in range(99):
+for i in range(49):
     outfile = open('spikes_record/'+str(i)+'_inhib_'+inhi+'.txt', file_op)
     for j in (excitatory_a+excitatory_b)[i].spikes_record:
         outfile.write(str(j)+'\n')
