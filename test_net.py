@@ -105,7 +105,7 @@ for i in range(801):
 
 
 all_neuron = excitatory_a + excitatory_b + inhibitory + downstream + noise
-duration = 200
+duration = 2000
 
 
 for i in range(duration):
