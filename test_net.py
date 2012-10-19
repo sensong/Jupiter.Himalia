@@ -21,7 +21,7 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 5.0
+ex_settings['output_current_peak'] = 10.0
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
@@ -35,7 +35,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -0.5
+in_settings['output_current_peak'] = -1.0
 
 ds_settings = {}
 ds_settings['reset_potential'] = -70.0

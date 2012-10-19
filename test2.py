@@ -13,6 +13,7 @@ settings = {}
 settings['reset_potential'] = -70.0
 settings['spike_potential'] = 0
 settings['threshold'] = -54.0
+settings['refactory_period'] = 5.0
 settings['left_window_constant'] = 20#(t+)
 settings['right_window_constant'] = 20#(t-)
 settings['learning_rate'] = 0.05# (A+)
@@ -40,7 +41,7 @@ noise_b_neg = Noise('noise', 3, 100, -noise_intensy, 3.0)
 set = [pool_a, pool_b, shared_pool, current_a, current_b, neuron_a, neuron_b, noise_a_pos, noise_a_neg, noise_b_pos, noise_b_neg]
 
 inh = 'off'
-inh = 'on'
+#inh = 'on'
 if inh=='on':
     pool_a.connect(neuron_a)
     neuron_a.connect(pool_a)
@@ -59,12 +60,12 @@ noise_a_neg.connect(neuron_a)
 noise_b_pos.connect(neuron_b)
 noise_b_neg.connect(neuron_b)
 
-for i in range(10000):
+for i in range(4000):
     for neuron in set:
         event = Event(name = 'update')
         simpy.activate(event, event.update(neuron), delay = i)
 
-simpy.simulate(until = 10000.0)
+simpy.simulate(until = 4000.0)
 
 print(len(neuron_a.spikes_record), len(neuron_b.spikes_record))
 if inh=='on':
@@ -81,8 +82,7 @@ else:
 for i in neuron_b.spikes_record:
     outfile_b.write(str(i)+'\n')
 
-
-
+exit()
 inh = []
 for i in range(len(pool_a.spikes_record)):
     inh.append(pool_a.spikes_record[i]+shared_pool.spikes_record[i])
