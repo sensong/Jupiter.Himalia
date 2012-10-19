@@ -3,15 +3,17 @@ from Stimulator import Current_Poisson_Stimulator as Noise
 from Stimulator import Current_Poisson_Pool as Inhibitory_Pool
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.SimulationTrace as simpy
+import SimPy.Simulation as simpy
 import random
-import matplotlib.pyplot as plot
-import numpy
+#import matplotlib.pyplot as plot
+#import numpy
+import os.path
 
 ex_settings = {}
 ex_settings['reset_potential'] = -70.0
 ex_settings['spike_potential'] = 0
 ex_settings['threshold'] = -54.0
+ex_settings['refactory_period'] = 5.0
 ex_settings['left_window_constant'] = 20#(t+)
 ex_settings['right_window_constant'] = 20#(t-)
 ex_settings['learning_rate'] = 0.05# (A+)
@@ -19,12 +21,13 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 10.0
+ex_settings['output_current_peak'] = 5.0
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
 in_settings['spike_potential'] = 0
 in_settings['threshold'] = -64.0
+in_settings['refactory_period'] = 0.0
 in_settings['left_window_constant'] = 20#(t+)
 in_settings['right_window_constant'] = 20#(t-)
 in_settings['learning_rate'] = 0.05# (A+)
@@ -38,6 +41,7 @@ ds_settings = {}
 ds_settings['reset_potential'] = -70.0
 ds_settings['spike_potential'] = 0
 ds_settings['threshold'] = -54.0
+ds_settings['refactory_period'] = 0.0
 ds_settings['left_window_constant'] = 20#(t+)
 ds_settings['right_window_constant'] = 20#(t-)
 ds_settings['learning_rate'] = 0.05# (A+)
@@ -45,8 +49,9 @@ ds_settings['stability'] = 1.05# (B)
 ds_settings['weight_ceiling'] = 1.0
 ds_settings['type'] = 'voltage'
 
-inhi = 'off'
-#inhi = 'on'
+inhi = 'on'
+if os.path.isfile('no_inhi.tmp'):
+    inhi = 'off'
 
 noise_intensy = 8.2
 
@@ -61,6 +66,8 @@ downstream = []
 
 source_a = Current('source', 0, 'current', 20.7)
 source_b = Current('source', 1, 'current', 21.5)
+
+
 
 for i in range(99):
     neuron_producing = Neuron('excitatory', i, ex_settings, 'off')
@@ -98,7 +105,7 @@ for i in range(801):
 
 
 all_neuron = excitatory_a + excitatory_b + inhibitory + downstream + noise
-duration = 600
+duration = 200
 
 
 for i in range(duration):
@@ -120,12 +127,25 @@ print("simulation done.")
 
 #print ds_spikes_number/ex_spikes_number
 
+is_continue = os.path.isfile('continue.tmp')
+file_op = 'w'
+if is_continue:
+    file_op = 'a'
+
+
 for i in range(99):
-    outfile = open('spikes_record/'+str(i)+'_inhib_'+inhi+'.txt', 'w')
+    outfile = open('spikes_record/'+str(i)+'_inhib_'+inhi+'.txt', file_op)
     for j in (excitatory_a+excitatory_b)[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
 
+continue_file = open('continue.tmp', 'w')
+continue_file.write('!')
+continue_file.close()
+
+#for i in excitatory_a+excitatory_b+inhibitory:
+    #continue_file.write(str(i)+'\n')
+#continue_file.close()
 
 exit()
 x = list(range(len(excitatory_a[1].value_record)))
@@ -138,8 +158,9 @@ for inh in (excitatory_a+excitatory_b)[1].dendrites.keys():
             va[i] += inh.value_record[i]
 
 plot.plot(x, va)
-plot.plot(x, excitatory_a[1].value_record)
+#plot.plot(x, excitatory_a[1].value_record)
 plot.plot(x, excitatory_a[1].spikes_record, '.-')
+plot.plot(x, inhibitory[1].spikes_record, '-')
 
 
 

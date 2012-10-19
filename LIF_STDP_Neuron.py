@@ -5,10 +5,11 @@ import SimPy.Simulation as simpy
 from Jupiter.Ecliptic.Neuron import Neuron
 
 class LIF_STDP_Neuron(Neuron):
-    def __init__(self, domain, index, settings, STDP='on'):
+    def __init__(self, domain, index, settings, STDP='on', initial_membrane_potential=0.0):
         #settings['reset_potential'] = -70
         #settings['spike_potential'] = 0
         #settings['threshold'] = -54
+        #settings['refactory_period'] = 5.0 ms
         #settings['left_window_constant'] = (t+)
         #settings['right_window_constant'] = (t-)
         #settings['learning_rate'] = learning_rate (A+)
@@ -39,9 +40,13 @@ class LIF_STDP_Neuron(Neuron):
         self.right_window_width = abs(math.log(0.01) * self.right_window_constant)
         self.right_learning_rate = self.left_learning_rate * self.left_window_width * self.stability / self.right_window_width
 
-        self.membrane_potential = self.reset_potential
+        if initial_membrane_potential == 0.0:
+            self.membrane_potential = self.reset_potential
+        else:
+            self.membrane_potential = initial_membrane_potential
         self.left_window = []
         self.right_window = []
+        self.refactory_period = settings['refactory_period']
         self.refact = 'no'
 
 
@@ -55,10 +60,10 @@ class LIF_STDP_Neuron(Neuron):
         #reset membrane potential
         self.membrane_potential = self.reset_potential 
         if self.type == 'current':
-            self.value += self.output_current_peak
+            self.value = self.output_current_peak
         self.refact = 'yes'
         event = Event(name = 'reactivate')
-        simpy.activate(event, event.reactivate(self), delay = 5.0, prior=True)
+        simpy.activate(event, event.reactivate(self), delay = self.refactory_period, prior=True)
         
         #print(simpy.now(), ":", str(self), "fire")
         self.spikes_number += 1

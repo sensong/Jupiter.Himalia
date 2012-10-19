@@ -1,3 +1,5 @@
+spikes_record/*.txt
+*.tmp
 NERD*
 .DS_Store
 *.py[co]
@@ -27,3 +29,8 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+inhib_a.txt
+inhib_b.txt
+no_inhib_a.txt
+no_inhib_b.txt

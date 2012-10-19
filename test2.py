@@ -40,7 +40,7 @@ noise_b_neg = Noise('noise', 3, 100, -noise_intensy, 3.0)
 set = [pool_a, pool_b, shared_pool, current_a, current_b, neuron_a, neuron_b, noise_a_pos, noise_a_neg, noise_b_pos, noise_b_neg]
 
 inh = 'off'
-#inh = 'on'
+inh = 'on'
 if inh=='on':
     pool_a.connect(neuron_a)
     neuron_a.connect(pool_a)
@@ -82,7 +82,6 @@ for i in neuron_b.spikes_record:
     outfile_b.write(str(i)+'\n')
 
 
-exit()
 
 inh = []
 for i in range(len(pool_a.spikes_record)):

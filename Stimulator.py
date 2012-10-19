@@ -77,7 +77,7 @@ class Current_Poisson_Pool(Neuron):
         self.freq_record.append(self.freq)
         self.value *= self.decay
         if random.random() < self.freq:   #spike
-            self.value += self.scale
+            self.value = self.scale
         self.spikes_record.append(self.value)
 
 

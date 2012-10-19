@@ -1,6 +1,6 @@
 import math
-import numpy
-import matplotlib.pyplot as plot
+#import numpy
+#import matplotlib.pyplot as plot
 from itertools import imap
 
 def pearsonr(x, y):
@@ -29,7 +29,7 @@ def calculate_corr(a, b, bin_size):
     temp_b = split_into_bins(b, bin_size)
     return pearsonr(temp_a, temp_b)
 
-bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600]#, 800, 1000]
+bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 
 avg_inhib_corr = [0.0] * len(bin_ops)
 avg_no_inhib_corr = [0.0] * len(bin_ops)
@@ -55,11 +55,23 @@ for i in range(99):
             avg_no_inhib_corr[k] += no_inhib_corr[k]
 
 print(total)
+
 for i in range(len(bin_ops)):
     avg_inhib_corr[i] /= total
     avg_no_inhib_corr[i] /= total
 
-x = range(len(bin_ops))
-plot.plot(x, avg_no_inhib_corr,'-', x, avg_inhib_corr, '.-')
-#plot.plot(x, no_inhib_corr)
-plot.show()
+stat_net_result_no_in = open('stat_net_result_no_in.txt', 'w')
+for i in avg_no_inhib_corr:
+    stat_net_result_no_in.write(str(i)+'\n')
+stat_net_result_no_in.close()
+stat_net_result_in = open('stat_net_result_in.txt', 'w')
+for i in avg_inhib_corr:
+    stat_net_result_in.write(str(i)+'\n')
+stat_net_result_in.close()
+
+
+
+#x = range(len(bin_ops))
+#plot.plot(x, avg_no_inhib_corr,'-', x, avg_inhib_corr, '.-')
+##plot.plot(x, no_inhib_corr)
+#plot.show()
