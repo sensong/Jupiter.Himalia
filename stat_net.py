@@ -33,9 +33,12 @@ bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 
 avg_inhib_corr = [0.0] * len(bin_ops)
 avg_no_inhib_corr = [0.0] * len(bin_ops)
+best_inhib_corr = [0.0] * len(bin_ops)
+best_no_inhib_corr = [0.0] *len(bin_ops)
 total = 0.0
-for i in range(49):
-    for j in range(i+1, 49):
+inhib_total = 0.0
+for i in range(99):
+    for j in range(i+1, 99):
         total += 1.0
         print(i, j)
         raw_inhib_a = [float(line) for line in open('spikes_record/'+str(i)+'_inhib_on.txt', 'r')]
@@ -47,17 +50,24 @@ for i in range(49):
         inhib_corr = []
 
         for bin_size in bin_ops:
-           no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 
-           inhib_corr.append(calculate_corr(raw_inhib_a, raw_inhib_b, bin_size)) 
+            if bin_size > len(raw_inhib_a):
+                break
+            no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 
+            inhib_corr.append(calculate_corr(raw_inhib_a, raw_inhib_b, bin_size)) 
 
-        for k in range(len(bin_ops)):
-            avg_inhib_corr[k] += inhib_corr[k]
+        limlen = 11
+        for k in range(limlen):
             avg_no_inhib_corr[k] += no_inhib_corr[k]
+            if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
+                avg_inhib_corr[k] += inhib_corr[k]
+                inhib_total += 1.0
 
-print(total)
+
+
+print(total, inhib_total)
 
 for i in range(len(bin_ops)):
-    avg_inhib_corr[i] /= total
+    avg_inhib_corr[i] /= (inhib_total/limlen)
     avg_no_inhib_corr[i] /= total
 
 stat_net_result_no_in = open('stat_net_result_no_in.txt', 'w')
