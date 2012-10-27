@@ -1,7 +1,9 @@
 import math
+import pickle
 #import numpy
 #import matplotlib.pyplot as plot
 from itertools import imap
+
 
 def pearsonr(x, y):
   n = len(x)
@@ -37,6 +39,10 @@ best_inhib_corr = [0.0] * len(bin_ops)
 best_no_inhib_corr = [0.0] *len(bin_ops)
 total = 0.0
 inhib_total = 0.0
+
+decorrelation_matrix_no_inhi = [[1.0] * 99 for i in range(99)]
+decorrelation_matrix_inhi = [[1.0] * 99 for i in range(99)]
+
 for i in range(99):
     for j in range(i+1, 99):
         total += 1.0
@@ -53,6 +59,11 @@ for i in range(99):
             no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 
             inhib_corr.append(calculate_corr(raw_inhib_a, raw_inhib_b, bin_size)) 
 
+        decorrelation_matrix_inhi[i][j] = inhib_corr[-1]
+        decorrelation_matrix_inhi[j][i] = inhib_corr[-1]
+        decorrelation_matrix_no_inhi[i][j] = no_inhib_corr[-1]
+        decorrelation_matrix_no_inhi[j][i] = no_inhib_corr[-1]
+        
         limlen = len(bin_ops)
         for k in range(limlen):
             avg_no_inhib_corr[k] += no_inhib_corr[k]
@@ -77,6 +88,9 @@ stat_net_result_in = open('stat_net_result_in.txt', 'w')
 for i in avg_inhib_corr:
     stat_net_result_in.write(str(i)+'\n')
 stat_net_result_in.close()
+
+pickle.dump(decorrelation_matrix_inhi, open('decorr_matrix_in.txt', 'w'))
+pickle.dump(decorrelation_matrix_no_inhi, open('decorr_matrix_no_in.txt', 'w'))
 
 
 
