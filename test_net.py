@@ -50,7 +50,7 @@ gc = []
 noise = []
 source = []
 
-connections_list = pickle.load(open('connections_list.txt', 'r'))
+connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_a.txt', 'r'))
 
 for i in range(99):
