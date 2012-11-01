@@ -72,8 +72,8 @@ for i in range(801):
         neuron_producing = Neuron('gc', i, in_settings, 'off')
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
-            inhibitee.connect(neuron_producing)
-            neuron_producing.connect(inhibitee)
+            mc[inhibitee].connect(neuron_producing)
+            neuron_producing.connect(mc[inhibitee])
 
 
 all_neuron = mc + gc + noise
