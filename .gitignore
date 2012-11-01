@@ -1,6 +1,8 @@
 spikes_record/*.txt
 *.tmp
 NERD*
+mac
+cluster
 .DS_Store
 *.py[co]
 *.swp

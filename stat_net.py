@@ -1,8 +1,10 @@
 import math
 import pickle
+import os.path
 #import numpy
 #import matplotlib.pyplot as plot
 from itertools import imap
+
 
 
 def pearsonr(x, y):
@@ -31,7 +33,10 @@ def calculate_corr(a, b, bin_size):
     temp_b = split_into_bins(b, bin_size)
     return pearsonr(temp_a, temp_b)
 
-bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
+if os.path.isfile('mac'):
+    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600]
+elif os.path.isfile('cluster'):
+    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 
 avg_inhib_corr = [0.0] * len(bin_ops)
 avg_no_inhib_corr = [0.0] * len(bin_ops)
@@ -67,10 +72,12 @@ for i in range(99):
         limlen = len(bin_ops)
         for k in range(limlen):
             avg_no_inhib_corr[k] += no_inhib_corr[k]
-        if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
-            for k in range(limlen):
-                avg_inhib_corr[k] += inhib_corr[k]
-            inhib_total += 1.0
+            avg_inhib_corr[k] += inhib_corr[k]
+        inhib_total += 1.0
+        #if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
+            #for k in range(limlen):
+                #avg_inhib_corr[k] += inhib_corr[k]
+            #inhib_total += 1.0
 
 
 
