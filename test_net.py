@@ -5,6 +5,7 @@ from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.SimulationTrace as simpy
 import random
+import pickle
 #import matplotlib.pyplot as plot
 #import numpy
 import os.path
@@ -49,9 +50,11 @@ gc = []
 noise = []
 source = []
 
+connections_list = pickle.load(open('connections_list.txt', 'r'))
+pattern = pickle.load(open('source_pattern_a.txt', 'r'))
 
 for i in range(99):
-    source_producing = Current('source', i, 'current', 20.0 + 10.0*random.random()) 
+    source_producing = Current('source', i, 'current', pattern[i]) 
     source.append(source_producing)
     noise_pos = Noise('noise', i, 100, noise_intensy, 3.0)
     noise_neg = Noise('noise', i, 100, -noise_intensy, 3.0)
@@ -68,7 +71,7 @@ for i in range(801):
     if inhi == 'on':
         neuron_producing = Neuron('gc', i, in_settings, 'off')
         gc.append(neuron_producing)
-        for inhibitee in random.sample(mc, 20):
+        for inhibitee in connections_list[i]:
             inhibitee.connect(neuron_producing)
             neuron_producing.connect(inhibitee)
 
