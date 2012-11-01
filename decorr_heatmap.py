@@ -3,7 +3,7 @@ import numpy
 from matplotlib import pyplot
 from matplotlib import cm
 
-matrix = pickle.load(open('decorr_matrix_no_in.txt', 'r'))
+matrix = pickle.load(open('decorr_matrix_in.txt', 'r'))
 #A = numpy.random.randint(10, 100, 100).reshape(10, 10)
 A = numpy.array(matrix)
 #mask =  numpy.tri(A.shape[0], k=-1)
