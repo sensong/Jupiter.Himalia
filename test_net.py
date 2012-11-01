@@ -5,8 +5,8 @@ from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.SimulationTrace as simpy
 import random
-import matplotlib.pyplot as plot
-import numpy
+#import matplotlib.pyplot as plot
+#import numpy
 import os.path
 
 ex_settings = {}
@@ -105,7 +105,7 @@ continue_file = open('continue.tmp', 'w')
 continue_file.write('!')
 continue_file.close()
 
-
+exit()
 x = list(range(len(mc[1].value_record)))
 
 valen = len(gc[1].value_record)
