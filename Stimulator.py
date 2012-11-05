@@ -1,6 +1,8 @@
 from Jupiter.Ecliptic.Neuron import Neuron
 import random
 import math
+import SimPy.SimulationTrace as simpy
+from LIF_STDP_Neuron import Event
 
 class Constant_Stimulator(Neuron):
     def __init__(self, domain, index, type, value, decay_time = 0.0):
@@ -31,7 +33,11 @@ class Current_Poisson_Stimulator(Neuron):
     def update(self, now):
         self.value *= self.decay
         if random.random() < self.freq:  #spike
-            self.value+=self.scale
+            self.value=self.scale
+            current_time = simpy.now()
+            for target in self.axons.keys():
+                event = Event(name = str(target)+" receive from "+str(self))
+                simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
         self.spikes_record.append(self.value)
         
 

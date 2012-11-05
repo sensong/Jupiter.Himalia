@@ -34,7 +34,7 @@ def calculate_corr(a, b, bin_size):
     return pearsonr(temp_a, temp_b)
 
 if os.path.isfile('mac'):
-    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600]
+    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200]
 elif os.path.isfile('cluster'):
     bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 

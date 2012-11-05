@@ -37,9 +37,10 @@ class LIF_STDP_Neuron(Neuron):
         self.left_learning_rate = settings['learning_rate']
         self.left_window_width = abs(math.log(0.01) * self.left_window_constant)
         self.right_window_constant = settings["right_window_constant"]
-        self.right_window_width = abs(math.log(0.01) * self.right_window_constant)
-        self.right_learning_rate = self.left_learning_rate * self.left_window_width * self.stability / self.right_window_width
-
+        #self.right_window_width = abs(math.log(0.01) * self.right_window_constant)
+        self.right_window_width = self.right_window_constant
+        #self.right_learning_rate = self.left_learning_rate * self.left_window_width * self.stability / self.right_window_width
+        self.right_learning_rate = self.left_learning_rate
         if initial_membrane_potential == 0.0:
             self.membrane_potential = self.reset_potential
         else:
@@ -75,7 +76,7 @@ class LIF_STDP_Neuron(Neuron):
             self.adjust_weight(source[0], source[1] - current_time)
         
         #open a new right window
-        self.right_window.append(current_time) 
+        #self.right_window.append(current_time) 
 
         #send action potential to each axon
         for target in self.axons.keys():
@@ -83,36 +84,45 @@ class LIF_STDP_Neuron(Neuron):
             simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
 
         #close the right window when it's over
-        event = Event(name = str(self) + " close right window")
-        simpy.activate(event, event.close_a_right_window(self, current_time), delay = self.right_window_width)
+        #event = Event(name = str(self) + " close right window")
+        #simpy.activate(event, event.close_a_right_window(self, current_time), delay = self.right_window_width)
 
 
     def receive(self, source, pre_spike_time):
         #print(simpy.now(), ":", str(self), "at", self.membrane_potential, "receive", self.dendrites[source])
 
         #increse membrane potential
-        membrane_potential_increment = self.dendrites[source]
+        #membrane_potential_increment = self.dendrites[source]
         #self.membrane_potential += membrane_potential_increment
         
         #insert the source into the left window
-        left_window_item = [source, pre_spike_time, simpy.now()]
-        self.left_window.append(left_window_item)
+        #left_window_item = [source, pre_spike_time, simpy.now()]
+        #self.left_window.append(left_window_item)
 
         #check to weaken the dendrite by each action in the right window
-        for post_spike_time in self.right_window:
-            self.adjust_weight(source, pre_spike_time - post_spike_time)
+        current_time = simpy.now()
+        if source.domain == 'source':
+            self.right_window.append(current_time) 
+            event = Event(name = str(self) + " close right window")
+            simpy.activate(event, event.close_a_right_window(self, current_time), delay = self.right_window_width)
+        elif source.domain == 'gc':
+            if len(self.right_window)>0:
+                self.adjust_weight(source, pre_spike_time - self.right_window[-1])
+
+        #for post_spike_time in self.right_window:
+            #self.adjust_weight(source, pre_spike_time - post_spike_time)
 
         #check if it can fire
-        if self.membrane_potential >= self.threshold:
-            if simpy.now() > self.last_firing_time:
-                self.last_firing_time = simpy.now()
-                event = Event(name = str(self) + " fire")
-                simpy.activate(event, event.fire(self), delay = 0.0)
+        #if self.membrane_potential >= self.threshold:
+            #if simpy.now() > self.last_firing_time:
+                #self.last_firing_time = simpy.now()
+                #event = Event(name = str(self) + " fire")
+                #simpy.activate(event, event.fire(self), delay = 0.0)
 
         #remove the source from the left window when it's over, and decrease the membrane potential
-        event = Event(name = str(self) + "remove an item from left window")
-        simpy.activate(event, event.remove_from_left_window(self, left_window_item, membrane_potential_increment), 
-                delay = self.left_window_width)
+        #event = Event(name = str(self) + "remove an item from left window")
+        #simpy.activate(event, event.remove_from_left_window(self, left_window_item, membrane_potential_increment), 
+                #delay = self.left_window_width)
 
 
     def adjust_weight(self, source, time_difference): #time_difference = t_pre - t_post
@@ -126,11 +136,15 @@ class LIF_STDP_Neuron(Neuron):
             #print(simpy.now(), ":", "increse", str(source), "->", str(self), "to", self.dendrites[source])
         elif time_difference >= 0 and self.dendrites[source] > 0 and (self.STDP == "on" or self.STDP == "right_only") and self.dendrites[source] < 256:
             delta = self.dendrites[source]
-            self.dendrites[source] -= self.weight_ceiling * self.right_learning_rate * math.exp( -time_difference / self.right_window_constant)
-            if self.dendrites[source] < 0:
-                self.dendrites[source] = 0
-            delta = self.dendrites[source] - delta
-            self.weights_record.append([simpy.now(), source, delta])
+            self.dendrites[source] += self.right_learning_rate
+            if self.dendrites[source] > 1.0:
+                self.dendrites[source] = 1.0
+
+            #self.dendrites[source] -= self.weight_ceiling * self.right_learning_rate * math.exp( -time_difference / self.right_window_constant)
+            #if self.dendrites[source] < 0:
+                #self.dendrites[source] = 0
+            #delta = self.dendrites[source] - delta
+            #self.weights_record.append([simpy.now(), source, delta])
             #print(simpy.now(), ":", "increse", str(source), "->", str(self), "to", self.dendrites[source])
 
     def update(self, now):

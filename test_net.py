@@ -1,6 +1,4 @@
-from Stimulator import Constant_Stimulator as Current
-from Stimulator import Current_Poisson_Stimulator as Noise
-from Stimulator import Current_Poisson_Pool as gc_Pool
+from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.SimulationTrace as simpy
@@ -15,9 +13,9 @@ ex_settings['reset_potential'] = -70.0
 ex_settings['spike_potential'] = 0
 ex_settings['threshold'] = -54.0
 ex_settings['refactory_period'] = 5.0
-ex_settings['left_window_constant'] = 20#(t+)
-ex_settings['right_window_constant'] = 20#(t-)
-ex_settings['learning_rate'] = 0.05# (A+)
+ex_settings['left_window_constant'] = 5#(t+)
+ex_settings['right_window_constant'] = 5#(t-)
+ex_settings['learning_rate'] = 0.0015# (A+)
 ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
@@ -36,11 +34,13 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -5.4
+in_settings['output_current_peak'] = -1.0
 
 inhi = 'on'
 if os.path.isfile('no_inhi.tmp'):
     inhi = 'off'
+
+#inhi = 'off'
 
 noise_intensy = 8.2
 
@@ -54,13 +54,13 @@ connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_a.txt', 'r'))
 
 for i in range(99):
-    source_producing = Current('source', i, 'current', pattern[i]) 
+    source_producing = PoissonNeuron('source', i, pattern[i]*5, 240.0, 5.0) 
     source.append(source_producing)
-    noise_pos = Noise('noise', i, 100, noise_intensy, 3.0)
-    noise_neg = Noise('noise', i, 100, -noise_intensy, 3.0)
+    noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
+    noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
     noise.append(noise_pos)
     noise.append(noise_neg)
-    neuron_producing = Neuron('mc', i, ex_settings, 'off')
+    neuron_producing = Neuron('mc', i, ex_settings, 'right_only')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
     noise_pos.connect(neuron_producing)
@@ -73,12 +73,12 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee])
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.3)
 
 
-all_neuron = mc + gc + noise
+all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
-    duration = 600
+    duration = 800
 elif os.path.isfile('cluster'):
     duration = 2400
 
@@ -108,20 +108,34 @@ continue_file = open('continue.tmp', 'w')
 continue_file.write('!')
 continue_file.close()
 
+
+avg_weight = 0.0
+count = 0.0
+for m in mc:
+    for g in m.dendrites.values():
+        avg_weight += g
+        count += 1.0
+avg_weight /= count
+print(avg_weight, count)
+
+
+
+
 exit()
 x = list(range(len(mc[1].value_record)))
 
-valen = len(gc[1].value_record)
-va = [0.0] * valen 
-for inh in mc[1].dendrites.keys():
-    if inh in gc:
-        for i in range(valen):
-            va[i] += inh.value_record[i]
+#valen = len(gc[1].value_record)
+#va = [0.0] * valen 
+#for inh in mc[1].dendrites.keys():
+    #if inh in gc:
+        #for i in range(valen):
+            #va[i] += inh.value_record[i]
 
-plot.plot(x, va)
+#plot.plot(x, va, '+')
 #plot.plot(x, mc_a[1].value_record)
+plot.plot(x, source[1].spikes_record, '-')
 plot.plot(x, mc[1].spikes_record, '.-')
-plot.plot(x, gc[1].spikes_record, '+')
+#plot.plot(x, gc[1].spikes_record, '+')
 
 
 
