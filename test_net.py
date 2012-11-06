@@ -77,21 +77,23 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324)
+            neuron_producing.connect(mc[inhibitee])
 
 if is_trained == 'trained':
-    trained_weights_file = open('trained_weights.txt', 'r')
-    trained_weights = pickle.load(trained_weights_file)
+    weights_file = open('trained_weights.txt', 'r')
+elif is_trained == 'random':
+    weights_file = open('random_weights.txt', 'r')
+    setting_weights = pickle.load(weights_file)
     i = 0
     for m in mc:
         j = 0
         for g in m.dendrites.keys():
-            m.dendrites[g] = trained_weights[i][j]
+            m.dendrites[g] = setting_weights[i][j]
 
 
 all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
-    duration = 10
+    duration = 5
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -105,12 +107,7 @@ print("simulation scheduled.")
 simpy.simulate(until = duration+0.0)
 print("simulation done.")
 
-is_continue = os.path.isfile('continue.tmp')
 file_op = 'w'
-if is_continue:
-    file_op = 'a'
-
-
 for i in range(99):
     outfile = open('spikes_record/'+str(i)+pattern_index+'_inhib_'+is_trained+'.txt', file_op)
     for j in mc[i].spikes_record:
@@ -121,7 +118,7 @@ for i in range(99):
 
 
 exit()
-x = list(range(len(mc[1].value_record)))
+#x = list(range(len(mc[1].value_record)))
 
 #valen = len(gc[1].value_record)
 #va = [0.0] * valen 
