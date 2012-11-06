@@ -4,6 +4,7 @@ NERD*
 mac
 cluster
 .DS_Store
+nohup.out
 *.py[co]
 *.swp
 # Packages

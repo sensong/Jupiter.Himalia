@@ -4,8 +4,8 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-import matplotlib.pyplot as plot
-import numpy
+#import matplotlib.pyplot as plot
+#import numpy
 import os.path
 import sys
 
@@ -120,7 +120,7 @@ for m in mc:
 pickle.dump(trained_weights, trained_weights_file)
 print('average weight:', avg/total)
 
-
+exit()
 x = list(range(len(mc[1].value_record)))
 
 valen = len(gc[1].value_record)
