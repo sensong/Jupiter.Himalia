@@ -7,6 +7,7 @@ import pickle
 #import matplotlib.pyplot as plot
 #import numpy
 import os.path
+import sys
 
 ex_settings = {}
 ex_settings['reset_potential'] = -70.0
@@ -36,7 +37,11 @@ in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
 in_settings['output_current_peak'] = -1.0
 
-inhi = 'on'
+
+pattern_index = sys.argv[1]
+inhi = sys.argv[2]
+is_trained = sys.argv[3]
+
 #if os.path.isfile('no_inhi.tmp'):
     #inhi = 'off'
 
@@ -49,7 +54,6 @@ gc = []
 noise = []
 source = []
 
-pattern_index = 'a'
 connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
@@ -75,9 +79,7 @@ for i in range(801):
             mc[inhibitee].connect(neuron_producing)
             neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324)
 
-is_trained = 'random'
-if os.path.isfile('trained'):
-    is_trained = 'trained'
+if is_trained == 'trained':
     trained_weights_file = open('trained_weights.txt', 'r')
     trained_weights = pickle.load(trained_weights_file)
     i = 0
@@ -91,7 +93,7 @@ all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
     duration = 600
 elif os.path.isfile('cluster'):
-    duration = 20
+    duration = 2000
 
 
 for i in range(duration):
