@@ -37,10 +37,9 @@ in_settings['output_current_decay'] = 3.0
 in_settings['output_current_peak'] = -1.0
 
 inhi = 'on'
-if os.path.isfile('no_inhi.tmp'):
-    inhi = 'off'
+#if os.path.isfile('no_inhi.tmp'):
+    #inhi = 'off'
 
-#inhi = 'off'
 
 noise_intensy = 8.2
 
@@ -73,12 +72,21 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee], 0.0, 0.3)
+            neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324)
+
+if os.path.isfile('trained'):
+    trained_weights_file = open('trained_weights.txt', 'r')
+    trained_weights = pickle.load(trained_weights_file)
+    i = 0
+    for m in mc:
+        j = 0
+        for g in m.dendrites.keys():
+            m.dendrites[g] = trained_weights[i][j]
 
 
 all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
-    duration = 800
+    duration = 600
 elif os.path.isfile('cluster'):
     duration = 2400
 
@@ -104,25 +112,7 @@ for i in range(99):
         outfile.write(str(j)+'\n')
     outfile.close()
 
-continue_file = open('continue.tmp', 'w')
-continue_file.write('!')
-continue_file.close()
 
-weights = []
-avg_weight = 0.0
-count = 0.0
-for m in mc:
-    weight_list_temp = []
-    for g in m.dendrites.values():
-	weight_list_temp.append(g)
-        avg_weight += g
-        count += 1.0
-    weights.append(weight_list_temp)
-avg_weight /= count
-print(avg_weight, count)
-
-weight_out = open('trained_weights.txt','w')
-pickle.dump(weights,weight_out)
 
 
 exit()
