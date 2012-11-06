@@ -159,7 +159,7 @@ class LIF_STDP_Neuron(Neuron):
         input = 0.0
         for source in self.dendrites.keys():
             if source.type == 'current':
-                input += source.value
+                input += source.value*self.dendrites[source]
             elif source.type == 'voltage':
                 pass # Voltage type input, add code here
         self.membrane_potential += input * 0.1
