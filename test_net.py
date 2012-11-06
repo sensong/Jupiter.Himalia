@@ -1,7 +1,7 @@
 from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.SimulationTrace as simpy
+import SimPy.Simulation as simpy
 import random
 import pickle
 #import matplotlib.pyplot as plot

@@ -58,6 +58,16 @@ for i in range(99):
 corr_random = pearsonr(a_random, b_random)
 corr_trained = pearsonr(a_trained, b_trained)
 
+a_random_file = open('raw_data/a_random_pattern.txt','w')
+a_trained_file = open('raw_data/a_trained_pattern.txt','w')
+b_random_file = open('raw_data/b_random_pattern.txt','w')
+b_trained_file = open('raw_data/b_trained_pattern.txt','w')
+pickle.dump(a_random,a_random_file)
+pickle.dump(a_trained,a_trained_file)
+pickle.dump(b_random,b_random_file)
+pickle.dump(b_trained,b_trained_file)
+
+
 print(corr_random, corr_trained)
 
 
