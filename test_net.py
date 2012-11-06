@@ -64,7 +64,7 @@ for i in range(99):
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
     noise.append(noise_pos)
     noise.append(noise_neg)
-    neuron_producing = Neuron('mc', i, ex_settings, 'right_only')
+    neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
     noise_pos.connect(neuron_producing)
@@ -91,7 +91,7 @@ if is_trained == 'trained':
 
 all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
-    duration = 600
+    duration = 10
 elif os.path.isfile('cluster'):
     duration = 2000
 
