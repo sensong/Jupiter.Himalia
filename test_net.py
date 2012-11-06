@@ -108,17 +108,21 @@ continue_file = open('continue.tmp', 'w')
 continue_file.write('!')
 continue_file.close()
 
-
+weights = []
 avg_weight = 0.0
 count = 0.0
 for m in mc:
+    weight_list_temp = []
     for g in m.dendrites.values():
+	weight_list_temp.append(g)
         avg_weight += g
         count += 1.0
+    weights.append(weight_list_temp)
 avg_weight /= count
 print(avg_weight, count)
 
-
+weight_out = open('trained_weights.txt','w')
+pickle.dump(weights,weight_out)
 
 
 exit()
