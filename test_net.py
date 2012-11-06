@@ -4,8 +4,8 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
@@ -38,12 +38,14 @@ in_settings['output_current_decay'] = 3.0
 in_settings['output_current_peak'] = -1.0
 
 
-pattern_index = sys.argv[1]
-inhi = sys.argv[2]
-is_trained = sys.argv[3]
+pattern_index = 'a'
+inhi = 'on'
+is_trained = 'random'
 
-#if os.path.isfile('no_inhi.tmp'):
-    #inhi = 'off'
+if len(sys.argv)>1:
+    pattern_index = sys.argv[1]
+    inhi = sys.argv[2]
+    is_trained = sys.argv[3]
 
 
 noise_intensy = 8.2
@@ -64,7 +66,7 @@ for i in range(99):
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
     noise.append(noise_pos)
     noise.append(noise_neg)
-    neuron_producing = Neuron('mc', i, ex_settings, 'off')
+    neuron_producing = Neuron('mc', i, ex_settings, 'right_only')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
     noise_pos.connect(neuron_producing)
@@ -77,21 +79,13 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324)
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.3)
 
-if is_trained == 'trained':
-    trained_weights_file = open('trained_weights.txt', 'r')
-    trained_weights = pickle.load(trained_weights_file)
-    i = 0
-    for m in mc:
-        j = 0
-        for g in m.dendrites.keys():
-            m.dendrites[g] = trained_weights[i][j]
 
 
 all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
-    duration = 10
+    duration = 600
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -105,36 +99,42 @@ print("simulation scheduled.")
 simpy.simulate(until = duration+0.0)
 print("simulation done.")
 
-is_continue = os.path.isfile('continue.tmp')
 file_op = 'w'
-if is_continue:
-    file_op = 'a'
-
-
 for i in range(99):
     outfile = open('spikes_record/'+str(i)+pattern_index+'_inhib_'+is_trained+'.txt', file_op)
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
 
+total = 0.0
+avg = 0.0
+trained_weights_file = open('trained_weights.txt', 'w')
+trained_weights = []
+for m in mc:
+    temp_weights = []
+    for g in m.dendrites.values():
+        temp_weights.append(g)
+        total+=1.0
+        avg += g
+    trained_weights.append(temp_weights)
+pickle.dump(trained_weights, trained_weights_file)
+print('average weight:', avg/total)
 
 
-
-exit()
 x = list(range(len(mc[1].value_record)))
 
-#valen = len(gc[1].value_record)
-#va = [0.0] * valen 
-#for inh in mc[1].dendrites.keys():
-    #if inh in gc:
-        #for i in range(valen):
-            #va[i] += inh.value_record[i]
+valen = len(gc[1].value_record)
+va = [0.0] * valen 
+for inh in mc[1].dendrites.keys():
+    if inh in gc:
+        for i in range(valen):
+            va[i] += inh.value_record[i]
 
 #plot.plot(x, va, '+')
 #plot.plot(x, mc_a[1].value_record)
 plot.plot(x, source[1].spikes_record, '-')
 plot.plot(x, mc[1].spikes_record, '.-')
-#plot.plot(x, gc[1].spikes_record, '+')
+plot.plot(x, gc[1].spikes_record, '+')
 
 
 
