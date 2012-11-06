@@ -49,8 +49,9 @@ gc = []
 noise = []
 source = []
 
+pattern_index = 'a'
 connections_list = pickle.load(open('connection_list.txt', 'r'))
-pattern = pickle.load(open('source_pattern_a.txt', 'r'))
+pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 for i in range(99):
     source_producing = PoissonNeuron('source', i, pattern[i]*5, 240.0, 5.0) 
@@ -74,7 +75,9 @@ for i in range(801):
             mc[inhibitee].connect(neuron_producing)
             neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324)
 
+is_trained = 'random'
 if os.path.isfile('trained'):
+    is_trained = 'trained'
     trained_weights_file = open('trained_weights.txt', 'r')
     trained_weights = pickle.load(trained_weights_file)
     i = 0
@@ -88,7 +91,7 @@ all_neuron = mc + gc + noise + source
 if os.path.isfile('mac'):
     duration = 600
 elif os.path.isfile('cluster'):
-    duration = 2400
+    duration = 20
 
 
 for i in range(duration):
@@ -107,7 +110,7 @@ if is_continue:
 
 
 for i in range(99):
-    outfile = open('spikes_record/'+str(i)+'_inhib_'+inhi+'.txt', file_op)
+    outfile = open('spikes_record/'+str(i)+pattern_index+'_inhib_'+is_trained+'.txt', file_op)
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
