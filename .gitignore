@@ -3,6 +3,7 @@ spikes_record/*.txt
 NERD*
 mac
 cluster
+nohup.out
 .DS_Store
 *.py[co]
 *.swp
