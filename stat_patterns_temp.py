@@ -36,49 +36,27 @@ if os.path.isfile('mac'):
 elif os.path.isfile('cluster'):
     bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
 
-a_random = []
-a_trained = []
 a_noinh = []
-b_random = []
-b_trained = []
 b_noinh = []
 
 
 for i in range(99):
-    raw_a_random = [float(line) for line in open('spikes_record/'+str(i)+'a_on_random.txt', 'r')]
-    raw_a_trained=[float(line) for line in open('spikes_record/'+str(i)+'a_on_trained.txt', 'r')]
-    raw_a_noinh=[float(line) for line in open('spikes_record/'+str(i)+'a_on_noinh.txt', 'r')]
-    raw_b_random = [float(line) for line in open('spikes_record/'+str(i)+'b_on_random.txt', 'r')]
-    raw_b_trained=[float(line) for line in open('spikes_record/'+str(i)+'b_on_trained.txt', 'r')]
-    raw_b_noinh=[float(line) for line in open('spikes_record/'+str(i)+'b_on_noinh.txt', 'r')]
+    raw_a_noinh=[float(line) for line in open('spikes_record/'+str(i)+'a_inhib_off.txt', 'r')]
+    raw_b_noinh=[float(line) for line in open('spikes_record/'+str(i)+'b_inhib_off.txt', 'r')]
 
-    a_random.append(count_spike(raw_a_random))
-    a_trained.append(count_spike(raw_a_trained))
     a_noinh.append(count_spike(raw_a_noinh))
-    b_random.append(count_spike(raw_b_random))
-    b_trained.append(count_spike(raw_b_trained))
     b_noinh.append(count_spike(raw_b_noinh))
     
         
 corr_noinh = pearsonr(a_noinh, b_noinh)
-corr_random = pearsonr(a_random, b_random)
-corr_trained = pearsonr(a_trained, b_trained)
 
-a_random_file = open('raw_data/a_random_pattern.txt','w')
-a_trained_file = open('raw_data/a_trained_pattern.txt','w')
 a_noinh_file = open('raw_data/a_noinh_pattern.txt','w')
-b_random_file = open('raw_data/b_random_pattern.txt','w')
-b_trained_file = open('raw_data/b_trained_pattern.txt','w')
 b_noinh_file = open('raw_data/b_noinh_pattern.txt','w')
-pickle.dump(a_random,a_random_file)
-pickle.dump(a_trained,a_trained_file)
 pickle.dump(a_noinh,a_noinh_file)
-pickle.dump(b_random,b_random_file)
-pickle.dump(b_trained,b_trained_file)
 pickle.dump(b_noinh,b_noinh_file)
 
 
-print(corr_noinh, corr_random, corr_trained)
+print(corr_noinh)
 
 
 
