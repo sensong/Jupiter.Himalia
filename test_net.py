@@ -1,3 +1,4 @@
+from Stimulator import Constant_Stimulator as ConstantNeuron
 from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
@@ -54,7 +55,7 @@ connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 for i in range(99):
-    source_producing = PoissonNeuron('source', i, pattern[i]*5, 240.0, 5.0) 
+    source_producing = ConstantNeuron('source', i, 'current', pattern[i]) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
@@ -88,7 +89,7 @@ if inhi == 'on':
                 m.dendrites[g] = setting_weights[i][j]
 
 
-all_neuron = mc + gc + noise + source
+all_neuron = mc + gc + noise
 if os.path.isfile('mac'):
     duration = 5
 elif os.path.isfile('cluster'):
@@ -107,13 +108,13 @@ print("simulation done.")
 file_op = 'w'
 for i in range(99):
     outfile = open('spikes_record/'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
-    source_outfile = open('spikes_record/source'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
-    for j in source[i].spikes_record:
-        source_outfile.write(str(j)+'\n')
+    #source_outfile = open('spikes_record/source'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
+    #for j in source[i].spikes_record:
+        #source_outfile.write(str(j)+'\n')
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
-    source_outfile.close()
+    #source_outfile.close()
 
 
 
