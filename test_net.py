@@ -46,7 +46,7 @@ is_trained = sys.argv[3]
     #inhi = 'off'
 
 
-noise_intensy = 0.2
+noise_intensy = 8.2
 
 all_neuron = []
 mc = []
@@ -55,7 +55,8 @@ noise = []
 source = []
 
 connections_list = pickle.load(open('connection_list.txt', 'r'))
-pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
+#pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
+pattern = pickle.load(open('source_pattern_a.txt', 'r'))
 
 for i in range(99):
     source_producing = PoissonNeuron('source', i, pattern[i]*5, 240.0, 5.0) 

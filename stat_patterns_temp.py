@@ -41,8 +41,8 @@ b_noinh = []
 
 
 for i in range(99):
-    raw_a_noinh=[float(line) for line in open('spikes_record/'+str(i)+'a_inhib_off.txt', 'r')]
-    raw_b_noinh=[float(line) for line in open('spikes_record/'+str(i)+'b_inhib_off.txt', 'r')]
+    raw_a_noinh=[float(line) for line in open('spikes_record/'+str(i)+'a_off_off.txt', 'r')]
+    raw_b_noinh=[float(line) for line in open('spikes_record/'+str(i)+'b_off_off.txt', 'r')]
 
     a_noinh.append(count_spike(raw_a_noinh))
     b_noinh.append(count_spike(raw_b_noinh))
