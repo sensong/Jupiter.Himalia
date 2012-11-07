@@ -29,18 +29,18 @@ class Current_Poisson_Stimulator(Neuron):
         self.decay = 1.0-1.0/decay
         self.value = 0.0
         self.spikes_record = []
-	self.spike_status = -70.0 # nospike=-70.0, spike = 0.0
+	    self.spike_status = -70.0 # nospike=-70.0, spike = 0.0
     def update(self, now):
         self.value *= self.decay
         if random.random() < self.freq:  #spike
             self.value=self.scale
-	    self.spike_status = 0.0
+	        self.spike_status = 0.0
             current_time = simpy.now()
             for target in self.axons.keys():
                 event = Event(name = str(target)+" receive from "+str(self))
                 simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
         self.spikes_record.append(self.spike_status)
-	self.spike_status = -70.0
+	    self.spike_status = -70.0
         
 
         
