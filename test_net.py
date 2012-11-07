@@ -42,10 +42,6 @@ pattern_index = sys.argv[1]
 inhi = sys.argv[2]
 is_trained = sys.argv[3]
 
-#if os.path.isfile('no_inhi.tmp'):
-    #inhi = 'off'
-
-
 noise_intensy = 8.2
 
 all_neuron = []
@@ -55,8 +51,7 @@ noise = []
 source = []
 
 connections_list = pickle.load(open('connection_list.txt', 'r'))
-#pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
-pattern = pickle.load(open('source_pattern_a.txt', 'r'))
+pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 for i in range(99):
     source_producing = PoissonNeuron('source', i, pattern[i]*5, 240.0, 5.0) 
@@ -112,9 +107,13 @@ print("simulation done.")
 file_op = 'w'
 for i in range(99):
     outfile = open('spikes_record/'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
+    source_outfile = open('spikes_record/source'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
+    for j in source[i].spikes_record:
+        source_outfile.write(str(j)+'\n')
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
+    source_outfile.close()
 
 
 
