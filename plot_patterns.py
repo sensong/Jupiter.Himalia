@@ -18,7 +18,7 @@ def pearsonr(x, y):
 
 mode = 'trained'
 mode = 'random'
-mode = 'noinh'
+#mode = 'noinh'
 a_file = open('raw_data/a_'+mode+'_pattern.txt', 'r')
 b_file = open('raw_data/b_'+mode+'_pattern.txt', 'r')
 

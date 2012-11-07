@@ -5,8 +5,8 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
@@ -36,7 +36,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -1.0
+in_settings['output_current_peak'] = -6.75
 
 
 pattern_index = sys.argv[1]
@@ -91,7 +91,7 @@ if inhi == 'on':
 
 all_neuron = mc + gc + noise
 if os.path.isfile('mac'):
-    duration = 5
+    duration = 400
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -119,21 +119,20 @@ for i in range(99):
 
 
 
-exit()
-#x = list(range(len(mc[1].value_record)))
+x = list(range(len(mc[1].value_record)))
 
-#valen = len(gc[1].value_record)
-#va = [0.0] * valen 
-#for inh in mc[1].dendrites.keys():
-    #if inh in gc:
-        #for i in range(valen):
-            #va[i] += inh.value_record[i]
+valen = len(gc[1].value_record)
+va = [0.0] * valen 
+for inh in mc[1].dendrites.keys():
+    if inh in gc:
+        for i in range(valen):
+            va[i] += inh.value_record[i]
 
-#plot.plot(x, va, '+')
+plot.plot(x, va, '-')
 #plot.plot(x, mc_a[1].value_record)
-plot.plot(x, source[1].spikes_record, '-')
+#plot.plot(x, source[1].spikes_record, '-')
 plot.plot(x, mc[1].spikes_record, '.-')
-#plot.plot(x, gc[1].spikes_record, '+')
+plot.plot(x, gc[1].spikes_record, '-')
 
 
 
