@@ -46,7 +46,7 @@ is_trained = sys.argv[3]
     #inhi = 'off'
 
 
-noise_intensy = 8.2
+noise_intensy = 0.2
 
 all_neuron = []
 mc = []
@@ -79,16 +79,17 @@ for i in range(801):
             mc[inhibitee].connect(neuron_producing)
             neuron_producing.connect(mc[inhibitee])
 
-if is_trained == 'trained':
-    weights_file = open('trained_weights.txt', 'r')
-elif is_trained == 'random':
-    weights_file = open('random_weights.txt', 'r')
-    setting_weights = pickle.load(weights_file)
-    i = 0
-    for m in mc:
-        j = 0
-        for g in m.dendrites.keys():
-            m.dendrites[g] = setting_weights[i][j]
+if inhi == 'on':
+    if is_trained == 'trained':
+        weights_file = open('trained_weights.txt', 'r')
+    elif is_trained == 'random':
+        weights_file = open('random_weights.txt', 'r')
+        setting_weights = pickle.load(weights_file)
+        i = 0
+        for m in mc:
+            j = 0
+            for g in m.dendrites.keys():
+                m.dendrites[g] = setting_weights[i][j]
 
 
 all_neuron = mc + gc + noise + source
@@ -109,7 +110,7 @@ print("simulation done.")
 
 file_op = 'w'
 for i in range(99):
-    outfile = open('spikes_record/'+str(i)+pattern_index+'_inhib_'+is_trained+'.txt', file_op)
+    outfile = open('spikes_record/'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
