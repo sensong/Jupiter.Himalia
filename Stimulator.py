@@ -21,29 +21,38 @@ class Constant_Stimulator(Neuron):
                 self.V_membrane *= 1.0-1.0/self.decay_time
 
 class Current_Poisson_Stimulator(Neuron):
-    def __init__(self, domain, index, freq, scale, decay):
+    def __init__(self, domain, index, freq, scale, decay, duration=0):
+        #parameter duration is used for pre-scheduled spike train. 
+        #set it to zero if you want a run-time generating spike train.
         Neuron.__init__(self, domain, index)
         self.type = 'current'
         self.freq = freq/1000.0  #Probability of occring in 1ms
         self.scale = scale
         self.decay = 1.0-1.0/decay
         self.value = 0.0
+        if duration > 0:
+            self.distribution = [0]*(duration)
+            for i in random.sample(list(range(duration)), int(self.freq*duration)):
+                self.distribution[i] = 1
+        self.duration = duration
         self.spikes_record = []
         self.spike_status = -70.0 # nospike=-70.0, spike = 0.0
     def update(self, now):
         self.value *= self.decay
-        if random.random() < self.freq:  #spike
-            self.value=self.scale
-            self.spike_status = 0.0
-            current_time = simpy.now()
-            for target in self.axons.keys():
-                event = Event(name = str(target)+" receive from "+str(self))
-                simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
+        if self.duration > 0:
+            if self.distribution[int(simpy.now())] == 1:
+                self.fire()
+        elif random.random() < self.freq: 
+            self.fire()
         self.spikes_record.append(self.spike_status)
         self.spike_status = -70.0
-        
-
-        
+    def fire(self):
+        self.value=self.scale
+        self.spike_status = 0.0
+        current_time = simpy.now()
+        for target in self.axons.keys():
+            event = Event(name = str(target)+" receive from "+str(self))
+            simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
 
 class Current_Poisson_Pool(Neuron):
     def __init__(self, domain, index, scale, decay, pool_settings):
