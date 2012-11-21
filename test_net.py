@@ -4,13 +4,13 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 5
+    duration = 50
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -61,6 +61,7 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
+    #source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0)
     source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0, duration+2)
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
@@ -70,8 +71,8 @@ for i in range(99):
     neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
-    noise_pos.connect(neuron_producing)
-    noise_neg.connect(neuron_producing)
+    #noise_pos.connect(neuron_producing)
+    #noise_neg.connect(neuron_producing)
 
 
 for i in range(801):
@@ -121,8 +122,8 @@ for i in range(99):
 
 
 
-exit()
-#x = list(range(len(mc[1].value_record)))
+#exit()
+x = list(range(len(mc[1].value_record)))
 
 #valen = len(gc[1].value_record)
 #va = [0.0] * valen 
