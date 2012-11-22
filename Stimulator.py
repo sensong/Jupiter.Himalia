@@ -1,7 +1,7 @@
 from Jupiter.Ecliptic.Neuron import Neuron
 import random
 import math
-import SimPy.SimulationTrace as simpy
+import SimPy.Simulation as simpy
 from LIF_STDP_Neuron import Event
 
 class Constant_Stimulator(Neuron):
