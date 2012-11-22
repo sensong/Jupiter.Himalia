@@ -36,7 +36,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -1.0
+in_settings['output_current_peak'] = -1.5
 
 
 pattern_index = sys.argv[1]
@@ -64,8 +64,8 @@ for i in range(99):
     neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
-    noise_pos.connect(neuron_producing)
-    noise_neg.connect(neuron_producing)
+#    noise_pos.connect(neuron_producing)
+#    noise_neg.connect(neuron_producing)
 
 
 for i in range(801):
