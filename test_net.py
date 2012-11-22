@@ -1,4 +1,5 @@
 from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
+from Stimulator import Constant_Stimulator as ConstantNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
@@ -61,7 +62,8 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
-    source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0)
+    source_producing = ConstantNeuron('source', i, 'current', pattern[i], 3.0)
+    #source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0)
     #source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0, duration+2)
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
