@@ -36,7 +36,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -1.5
+in_settings['output_current_peak'] = -1.0
 
 
 pattern_index = sys.argv[1]
