@@ -120,13 +120,13 @@ print("simulation done.")
 file_op = 'w'
 for i in range(99):
     outfile = open('spikes_record/'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
-    #source_outfile = open('spikes_record/source'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
-    #for j in source[i].spikes_record:
-        #source_outfile.write(str(j)+'\n')
+    source_outfile = open('spikes_record/source'+str(i)+pattern_index+'_'+inhi+'_'+is_trained+'.txt', file_op)
+    for j in source[i].spikes_record:
+        source_outfile.write(str(j)+'\n')
     for j in mc[i].spikes_record:
         outfile.write(str(j)+'\n')
     outfile.close()
-    #source_outfile.close()
+    source_outfile.close()
 
 exit()
 x = list(range(len(mc[1].value_record)))
