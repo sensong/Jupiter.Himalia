@@ -1,7 +1,7 @@
 from Jupiter.Ecliptic.Neuron import Neuron
 import random
 import math
-import SimPy.SimulationTrace as simpy
+import SimPy.Simulation as simpy
 from LIF_STDP_Neuron import Event
 
 class Constant_Stimulator(Neuron):
@@ -29,19 +29,41 @@ class Current_Poisson_Stimulator(Neuron):
         self.decay = 1.0-1.0/decay
         self.value = 0.0
         self.spikes_record = []
-
+	self.spike_status = -70.0 # nospike=-70.0, spike = 0.0
     def update(self, now):
         self.value *= self.decay
         if random.random() < self.freq:  #spike
             self.value=self.scale
+	    self.spike_status = 0.0
             current_time = simpy.now()
             for target in self.axons.keys():
                 event = Event(name = str(target)+" receive from "+str(self))
                 simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
-        self.spikes_record.append(self.value)
+        self.spikes_record.append(self.spike_status)
+	self.spike_status = -70.0
         
 
-        
+class Regular_Stimulator(Neuron):
+    def __init__(self, domain, index, freq, scale, decay):
+        Neuron.__init__(self, domain, index)
+        self.type = 'current'
+        self.freq = int(round(1000.0/freq))  #time interval between 2 neighbor spikes
+        self.scale = scale
+        self.decay = 1.0-1.0/decay
+        self.value = 0.0
+        self.spikes_record = []
+	self.spike_status = -70.0 # nospike=-70.0, spike = 0.0
+    def update(self, now):
+        self.value *= self.decay
+        if int(simpy.now()) % self.freq == 0: #spike
+            self.value=self.scale
+	    self.spike_status = 0.0
+            current_time = simpy.now()
+            for target in self.axons.keys():
+                event = Event(name = str(target)+" receive from "+str(self))
+                simpy.activate(event, event.receive(target, self, current_time), delay = self.axons[target], prior = True)
+        self.spikes_record.append(self.spike_status)
+	self.spike_status = -70.0 
 
 class Current_Poisson_Pool(Neuron):
     def __init__(self, domain, index, scale, decay, pool_settings):
