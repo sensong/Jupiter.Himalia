@@ -1,6 +1,10 @@
 from Stimulator import Constant_Stimulator as ConstantNeuron
 from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
+<<<<<<< HEAD
+from Stimulator import Constant_Stimulator as ConstantNeuron
+=======
 from Stimulator import Regular_Stimulator as RegNeuron
+>>>>>>> train
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
@@ -12,7 +16,7 @@ import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 220
+    duration = 50
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -56,6 +60,7 @@ if len(sys.argv)>1:
     is_trained = sys.argv[3]
 
 
+
 noise_intensy = 8.2
 
 all_neuron = []
@@ -70,17 +75,28 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
+<<<<<<< HEAD
+    source_producing = ConstantNeuron('source', i, 'current', pattern[i], 3.0)
+    #source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0)
+    #source_producing = PoissonNeuron('source', i, pattern[i]*5.0, 240.0, 5.0, duration+2)
+=======
     source_producing = RegNeuron('source', i, pattern[i]*10.0, 120.0, 5.0) 
+>>>>>>> train
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
     noise.append(noise_pos)
     noise.append(noise_neg)
-    neuron_producing = Neuron('mc', i, ex_settings, 'off')
+    neuron_producing = Neuron('mc', i, ex_settings, 'right_only')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
+<<<<<<< HEAD
+    #noise_pos.connect(neuron_producing)
+    #noise_neg.connect(neuron_producing)
+=======
 #    noise_pos.connect(neuron_producing)
 #    noise_neg.connect(neuron_producing)
+>>>>>>> train
 
 
 for i in range(801):
@@ -89,8 +105,8 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
+<<<<<<< HEAD
             neuron_producing.connect(mc[inhibitee])
-
 
 if inhi == 'on':
     if is_trained == 'trained':
@@ -105,7 +121,39 @@ if inhi == 'on':
                 m.dendrites[g] = setting_weights[i][j]
 
 
-all_neuron = mc + gc + source
+all_neuron = mc + gc + noise + source
+=======
+            #neuron_producing.connect(mc[inhibitee], 0.0, 1.0-random.random()*0.324) #for random synapses
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.3) #for trained synapses
+            #neuron_producing.connect(mc[inhibitee])
+
+#if is_trained == 'trained':
+    #trained_weights_file = open('trained_weights.txt', 'r')
+    #trained_weights = pickle.load(trained_weights_file)
+    #i = 0
+    #for m in mc:
+        #j = 0
+        #for g in m.dendrites.keys():
+            #m.dendrites[g] = trained_weights[i][j]
+#if inhi == 'on':
+    #if is_trained == 'trained':
+        #weights_file = open('trained_weights.txt', 'r')
+    #elif is_trained == 'random':
+        #weights_file = open('random_weights.txt', 'r')
+        #setting_weights = pickle.load(weights_file)
+        #i = 0
+        #for m in mc:
+            #j = 0
+            #for g in m.dendrites.keys():
+                #m.dendrites[g] = setting_weights[i][j]
+
+
+all_neuron = source + mc + gc
+if os.path.isfile('mac'):
+    duration = 200
+elif os.path.isfile('cluster'):
+    duration = 1100
+>>>>>>> train
 
 
 for i in range(duration):
@@ -127,6 +175,20 @@ for i in range(99):
         outfile.write(str(j)+'\n')
     outfile.close()
     #source_outfile.close()
+
+total = 0.0
+avg = 0.0
+trained_weights_file = open('trained_weights.txt', 'w')
+trained_weights = []
+for m in mc:
+    temp_weights = []
+    for g in m.dendrites.values():
+        temp_weights.append(g)
+        total+=1.0
+        avg += g
+    trained_weights.append(temp_weights)
+pickle.dump(trained_weights, trained_weights_file)
+print('average weight:', avg/total)
 
 exit()
 x = list(range(len(mc[1].value_record)))
