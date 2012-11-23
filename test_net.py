@@ -112,7 +112,7 @@ all_neuron = source + mc + gc
 if os.path.isfile('mac'):
     duration = 200
 elif os.path.isfile('cluster'):
-    duration = 2000
+    duration = 1100
 
 
 for i in range(duration):
