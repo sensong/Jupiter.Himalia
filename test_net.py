@@ -22,7 +22,7 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 20.7 
+ex_settings['output_current_peak'] = 10.0 
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
@@ -55,7 +55,7 @@ connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 for i in range(99):
-    source_producing = ConstantNeuron('source', i, 'current', pattern[i]) 
+    source_producing = ConstantNeuron('source', i, 'current', pattern[i]*2.5) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
@@ -91,7 +91,7 @@ if inhi == 'on':
 
 all_neuron = mc + gc + noise
 if os.path.isfile('mac'):
-    duration = 5
+    duration = 200
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -120,7 +120,7 @@ for i in range(99):
 
 
 exit()
-#x = list(range(len(mc[1].value_record)))
+x = list(range(len(mc[1].value_record)))
 
 #valen = len(gc[1].value_record)
 #va = [0.0] * valen 
@@ -131,7 +131,7 @@ exit()
 
 #plot.plot(x, va, '+')
 #plot.plot(x, mc_a[1].value_record)
-plot.plot(x, source[1].spikes_record, '-')
+#plot.plot(x, source[1].spikes_record, '-')
 plot.plot(x, mc[1].spikes_record, '.-')
 #plot.plot(x, gc[1].spikes_record, '+')
 
