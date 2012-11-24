@@ -6,13 +6,13 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 220
+    duration = 50
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -28,7 +28,7 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 10.0 
+ex_settings['output_current_peak'] = 48.0 
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
@@ -42,7 +42,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -1.5
+in_settings['output_current_peak'] = -6.0
 
 
 pattern_index = 'a'
@@ -70,7 +70,7 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
-    source_producing = RegNeuron('source', i, pattern[i]*10.0, 120.0, 5.0) 
+    source_producing = RegNeuron('source', i, pattern[i]*10.0, 70.0, 3.0) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
@@ -83,16 +83,14 @@ for i in range(99):
 #    noise_neg.connect(neuron_producing)
 
 
-for i in range(801):
-    if inhi == 'on':
+if inhi == 'on':
+    for i in range(801):
         neuron_producing = Neuron('gc', i, in_settings, 'off')
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
             neuron_producing.connect(mc[inhibitee])
 
-
-if inhi == 'on':
     if is_trained == 'trained':
         weights_file = open('trained_weights.txt', 'r')
     elif is_trained == 'random':
@@ -128,7 +126,7 @@ for i in range(99):
     outfile.close()
     source_outfile.close()
 
-exit()
+#exit()
 x = list(range(len(mc[1].value_record)))
 
 #valen = len(gc[1].value_record)
@@ -140,11 +138,14 @@ x = list(range(len(mc[1].value_record)))
 
 #plot.plot(x, va, '+')
 #plot.plot(x, mc_a[1].value_record)
-plot.plot(x, source[1].spikes_record, '-')
-plot.plot(x, mc[1].spikes_record, '.-')
-plot.plot(x, gc[1].spikes_record, '+')
+
+#plot.plot(x, source[1].spikes_record, '-')
+#plot.plot(x, mc[1].spikes_record, '.-')
+#plot.plot(x, gc[1].spikes_record, '-')
 
 
+for i in range(50):
+    plot.plot(x, mc[i].spikes_record)
 
 plot.show()
 
