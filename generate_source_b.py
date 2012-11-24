@@ -16,10 +16,10 @@ def pearsonr(x, y):
 
 source_a = pickle.load(open('source_pattern_a.txt', 'r'))
 source_b = []
-difference = 0.3
+difference = 0.2
 for i in source_a:
     if random.random() < difference:
-        source_b.append(20.0+10.0*random.random())
+        source_b.append(300.0*random.random())
     else:
         source_b.append(i)
 
