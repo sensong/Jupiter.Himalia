@@ -96,14 +96,13 @@ if inhi == 'on':
     elif is_trained == 'random':
         weights_file = open('random_weights.txt', 'r')
         setting_weights = pickle.load(weights_file)
-        i = 0
-        for m in mc:
-            j = 0
-            for g in m.dendrites.keys():
+        for i in range(99):
+            for g in mc[i].dendrites.keys():
                 if g in gc:
-                    m.dendrites[g] = setting_weights[i][j]
-
-
+                    print(gc.index(g))
+                    mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
+mc[1].print_connections()
+exit()
 all_neuron = mc + gc + source
 
 
