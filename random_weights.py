@@ -10,7 +10,7 @@ random_weights = []
 for i in trained_weights:
     temp = []
     for j in i:
-        temp.append(random.random()*0.7636+0.2364)
+        temp.append(random.random()*0.7+0.3)
     random_weights.append(temp)
 
 pickle.dump(random_weights, random_weights_file)
