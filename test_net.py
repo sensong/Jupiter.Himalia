@@ -56,7 +56,7 @@ if len(sys.argv)>1:
     is_trained = sys.argv[3]
 
 
-noise_intensy = 8.2
+noise_intensy = 10.0
 
 all_neuron = []
 mc = []
@@ -79,8 +79,8 @@ for i in range(99):
     neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
-#    noise_pos.connect(neuron_producing)
-#    noise_neg.connect(neuron_producing)
+    noise_pos.connect(neuron_producing)
+    noise_neg.connect(neuron_producing)
 
 
 if inhi == 'on':
@@ -101,7 +101,7 @@ if inhi == 'on':
             if g in gc:
                 mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
 
-all_neuron = mc + gc + source
+all_neuron = mc + gc + source + noise
 
 
 for i in range(duration):
