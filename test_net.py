@@ -12,7 +12,7 @@ import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 50
+    duration = 100
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -28,7 +28,7 @@ ex_settings['stability'] = 1.05# (B)
 ex_settings['weight_ceiling'] = 1.0
 ex_settings['type'] = 'current'
 ex_settings['output_current_decay'] = 3.0
-ex_settings['output_current_peak'] = 48.0 
+ex_settings['output_current_peak'] = 40.0 
 
 in_settings = {}
 in_settings['reset_potential'] = -70.0
@@ -42,7 +42,7 @@ in_settings['stability'] = 1.05# (B)
 in_settings['weight_ceiling'] = 1.0
 in_settings['type'] = 'current'
 in_settings['output_current_decay'] = 3.0
-in_settings['output_current_peak'] = -6.0
+in_settings['output_current_peak'] = -5.0
 
 
 pattern_index = 'a'
@@ -70,7 +70,7 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
-    source_producing = RegNeuron('source', i, pattern[i]*10.0, 70.0, 3.0) 
+    source_producing = RegNeuron('source', i, pattern[i], 70.0, 3.0) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
@@ -100,7 +100,8 @@ if inhi == 'on':
         for m in mc:
             j = 0
             for g in m.dendrites.keys():
-                m.dendrites[g] = setting_weights[i][j]
+                if g in gc:
+                    m.dendrites[g] = setting_weights[i][j]
 
 
 all_neuron = mc + gc + source
@@ -129,23 +130,21 @@ for i in range(99):
 #exit()
 x = list(range(len(mc[1].value_record)))
 
-#valen = len(gc[1].value_record)
-#va = [0.0] * valen 
-#for inh in mc[1].dendrites.keys():
-    #if inh in gc:
-        #for i in range(valen):
-            #va[i] += inh.value_record[i]
+valen = len(gc[1].value_record)
+va = [0.0] * valen 
+for inh in mc[1].dendrites.keys():
+    if inh in gc:
+        for i in range(valen):
+            va[i] += inh.value_record[i]
 
-#plot.plot(x, va, '+')
-#plot.plot(x, mc_a[1].value_record)
+plot.plot(x, va, '+')
 
-#plot.plot(x, source[1].spikes_record, '-')
-#plot.plot(x, mc[1].spikes_record, '.-')
-#plot.plot(x, gc[1].spikes_record, '-')
+plot.plot(x, source[1].spikes_record, '-')
+plot.plot(x, mc[1].spikes_record, '.-')
 
 
-for i in range(50):
-    plot.plot(x, mc[i].spikes_record)
+#for i in range(30):
+    #plot.plot(x, mc[i].spikes_record)
 
 plot.show()
 
