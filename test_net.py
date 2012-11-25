@@ -70,7 +70,7 @@ pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 
 for i in range(99):
-    source_producing = RegNeuron('source', i, pattern[i], 70.0, 3.0) 
+    source_producing = PoissonNeuron('source', i, pattern[i], 70.0, 3.0) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
