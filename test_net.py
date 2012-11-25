@@ -138,14 +138,17 @@ avg = 0.0
 trained_weights_file = open('trained_weights.txt', 'w')
 trained_weights = []
 for m in mc:
-    temp_weights = []
-    for g in m.dendrites.values():
-        temp_weights.append(g)
+    temp_weights = [0]*801
+    for g in m.dendrites.keys():
+        if g in gc:
+            temp_weights[gc.index(g)] = (m.dendrites[g])
         total+=1.0
-        avg += g
+        avg += m.dendrites[g]
     trained_weights.append(temp_weights)
 pickle.dump(trained_weights, trained_weights_file)
 print('average weight:', avg/total)
+
+mc[1].print_connections()
 
 exit()
 x = list(range(len(mc[1].value_record)))
