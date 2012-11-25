@@ -11,7 +11,7 @@ def convert_scale(raw_list, index):
 line_number = 99
 trains = []
 for i in range(line_number):
-    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'a_on_random.txt', 'r')]
+    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'a_on_trained.txt', 'r')]
     trains.append(convert_scale(raw_list, i))
 
 x = list(range(len(trains[0])))
