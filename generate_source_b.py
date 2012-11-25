@@ -19,13 +19,13 @@ source_b = []
 difference = 0.2
 for i in source_a:
     if random.random() < difference:
-        source_b.append(300.0*random.random())
+        source_b.append(100.0)
     else:
         source_b.append(i)
 
 
 
-bfile = open('source_pattern_b.txt', 'w')
+bfile = open('source_pattern_c.txt', 'w')
 pickle.dump(source_b, bfile)
 bfile.close()
 source_b = pickle.load(open('source_pattern_b.txt', 'r'))

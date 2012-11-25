@@ -6,8 +6,8 @@ from LIF_STDP_Neuron import Event
 import SimPy.Simulation as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
@@ -64,7 +64,7 @@ connections_list = pickle.load(open('connection_list.txt', 'r'))
 pattern = pickle.load(open('source_pattern_'+pattern_index+'.txt', 'r'))
 
 for i in range(99):
-    source_producing = RegNeuron('source', i, pattern[i], 80.0, 3.0) 
+    source_producing = RegNeuron('source', i, pattern[i], 70.0, 3.0) 
     source.append(source_producing)
     noise_pos = PoissonNeuron('noise', i, 100, noise_intensy, 3.0)
     noise_neg = PoissonNeuron('noise', i, 100, -noise_intensy, 3.0)
@@ -108,7 +108,7 @@ for i in range(801):
 
 all_neuron = source + mc + gc
 if os.path.isfile('mac'):
-    duration = 200
+    duration = 50
 elif os.path.isfile('cluster'):
     duration = 1400
 
@@ -147,7 +147,7 @@ for m in mc:
 pickle.dump(trained_weights, trained_weights_file)
 print('average weight:', avg/total)
 
-exit()
+#exit()
 x = list(range(len(mc[1].value_record)))
 
 #valen = len(gc[1].value_record)
