@@ -83,7 +83,7 @@ for i in range(801):
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee], 0.0, 0.3) #for trained synapses
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.0) #for trained synapses
 
 #if is_trained == 'trained':
     #trained_weights_file = open('trained_weights.txt', 'r')
@@ -108,9 +108,9 @@ for i in range(801):
 
 all_neuron = source + mc + gc
 if os.path.isfile('mac'):
-    duration = 50
+    duration = 100
 elif os.path.isfile('cluster'):
-    duration = 1400
+    duration = 2000
 
 
 for i in range(duration):
