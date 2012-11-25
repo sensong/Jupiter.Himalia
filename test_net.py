@@ -12,7 +12,7 @@ import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 100
+    duration = 10
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -89,17 +89,15 @@ if inhi == 'on':
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee])
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.3+0.7*random.random())
 
     if is_trained == 'trained':
         weights_file = open('trained_weights.txt', 'r')
-    elif is_trained == 'random':
-        weights_file = open('random_weights.txt', 'r')
-    setting_weights = pickle.load(weights_file)
-    for i in range(99):
-        for g in mc[i].dendrites.keys():
-            if g in gc:
-                mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
+        setting_weights = pickle.load(weights_file)
+        for i in range(99):
+            for g in mc[i].dendrites.keys():
+                if g in gc:
+                    mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
 
 all_neuron = mc + gc + source + noise
 

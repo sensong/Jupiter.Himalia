@@ -16,10 +16,10 @@ def pearsonr(x, y):
 
 source_a = pickle.load(open('source_pattern_a.txt', 'r'))
 source_b = []
-difference = 0.3
+difference = random.random()
 for i in source_a:
     if random.random() < difference:
-        source_b.append(20.0+10.0*random.random())
+        source_b.append(50.0+100.0*random.random())
     else:
         source_b.append(i)
 
@@ -29,4 +29,7 @@ bfile = open('source_pattern_b.txt', 'w')
 pickle.dump(source_b, bfile)
 bfile.close()
 source_b = pickle.load(open('source_pattern_b.txt', 'r'))
-print(pearsonr(source_a, source_b))
+
+result_file = open('result.txt', 'a')
+result_file.write('source corr: '+str(pearsonr(source_a, source_b))+'\n')
+result_file.close()

@@ -92,3 +92,7 @@ pickle.dump(b_noinh,b_noinh_file)
 
 print(source_corr_noinh, corr_noinh, source_corr_random, corr_random, source_corr_trained, corr_trained)
 
+result_file = open('result.txt', 'a')
+result_file.write('MC corr: '+str(corr_noinh)+' '+str(corr_random)+' '+str(corr_trained)+'\n')
+result_file.close()
+
