@@ -47,7 +47,7 @@ in_settings['output_current_peak'] = -5.0
 
 pattern_index = 'a'
 inhi = 'on'
-is_trained = 'random'
+is_trained = 'trained'
 
 
 if len(sys.argv)>1:
@@ -95,14 +95,13 @@ if inhi == 'on':
         weights_file = open('trained_weights.txt', 'r')
     elif is_trained == 'random':
         weights_file = open('random_weights.txt', 'r')
-        setting_weights = pickle.load(weights_file)
-        for i in range(99):
-            for g in mc[i].dendrites.keys():
-                if g in gc:
-                    print(gc.index(g))
-                    mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
-mc[1].print_connections()
-exit()
+    setting_weights = pickle.load(weights_file)
+    for i in range(99):
+        for g in mc[i].dendrites.keys():
+            if g in gc:
+                mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
+
+
 all_neuron = mc + gc + source
 
 
