@@ -1,6 +1,6 @@
 import pickle
 
-trained_weights_file = open('random_weights.txt', 'r')
+trained_weights_file = open('trained_weights.txt', 'r')
 trained_weights = pickle.load(trained_weights_file)
 #i = 0
 #for m in mc:
