@@ -1,5 +1,6 @@
-spikes_record/*.txt
 spikes_record
+spikes_record/
+spikes_record/*
 *.tmp
 NERD*
 mac
