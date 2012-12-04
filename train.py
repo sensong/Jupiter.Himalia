@@ -71,6 +71,7 @@ for i in range(99):
     noise.append(noise_pos)
     noise.append(noise_neg)
     neuron_producing = Neuron('mc', i, ex_settings, 'right_only')
+    neuron_producing.stim_source = source_producing
     mc.append(neuron_producing)
     source_producing.connect(neuron_producing)
 #    noise_pos.connect(neuron_producing)
@@ -146,8 +147,21 @@ for m in mc:
         avg += m.dendrites[g]
     trained_weights.append(temp_weights)
 pickle.dump(trained_weights, trained_weights_file)
-print('average weight:', avg/total)
+print('GC average weight:', avg/total)
 
+
+
+total = 0.0
+avg = 0.0
+trained_stim_weights_file = open('trained_stim_weights.txt', 'w')
+trained_stim_weights = []
+for m in mc:
+    temp = m.dendrites[m.stim_source]
+    trained_stim_weights.append(temp)
+    total += 1.0
+    avg += temp
+pickle.dump(trained_stim_weights, trained_stim_weights_file)
+print('Stim average weight:', avg/total)
 
 exit()
 x = list(range(len(mc[1].value_record)))

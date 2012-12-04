@@ -78,6 +78,7 @@ for i in range(99):
     noise.append(noise_neg)
     neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
+    neuron_producing.stim_source = source_producing
     source_producing.connect(neuron_producing)
     noise_pos.connect(neuron_producing)
     noise_neg.connect(neuron_producing)

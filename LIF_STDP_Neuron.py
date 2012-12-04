@@ -57,6 +57,8 @@ class LIF_STDP_Neuron(Neuron):
         self.value_record = []
         self.weights_record = []
 
+        self.stim_source = None
+
     def fire(self):
         #reset membrane potential
         self.membrane_potential = self.reset_potential 
@@ -139,6 +141,13 @@ class LIF_STDP_Neuron(Neuron):
             self.dendrites[source] += self.right_learning_rate
             if self.dendrites[source] > 1.0:
                 self.dendrites[source] = 1.0
+            if self.stim_source != None:
+                self.dendrites[self.stim_source] -= self.right_learning_rate/15.0
+                if self.dendrites[self.stim_source] < 0.0:
+                    self.dendrites[self.stim_source] = 0.0
+            else:
+                print("ERROR: MC has no stim source.")
+
 
             #self.dendrites[source] -= self.weight_ceiling * self.right_learning_rate * math.exp( -time_difference / self.right_window_constant)
             #if self.dendrites[source] < 0:
