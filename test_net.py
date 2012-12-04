@@ -3,11 +3,11 @@ from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
 from Stimulator import Regular_Stimulator as RegNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.SimulationTrace as simpy
+import SimPy.Simulation as simpy
 import random
 import pickle
-import matplotlib.pyplot as plot
-import numpy
+#import matplotlib.pyplot as plot
+#import numpy
 import os.path
 import sys
 
@@ -128,7 +128,7 @@ for i in range(99):
     outfile.close()
     source_outfile.close()
 
-#exit()
+exit()
 x = list(range(len(mc[1].value_record)))
 
 valen = len(gc[1].value_record)
