@@ -3,16 +3,16 @@ from Stimulator import Current_Poisson_Stimulator as PoissonNeuron
 from Stimulator import Regular_Stimulator as RegNeuron
 from LIF_STDP_Neuron import LIF_STDP_Neuron as Neuron
 from LIF_STDP_Neuron import Event
-import SimPy.Simulation as simpy
+import SimPy.SimulationTrace as simpy
 import random
 import pickle
-#import matplotlib.pyplot as plot
-#import numpy
+import matplotlib.pyplot as plot
+import numpy
 import os.path
 import sys
 
 if os.path.isfile('mac'):
-    duration = 10
+    duration = 200
 elif os.path.isfile('cluster'):
     duration = 2000
 
@@ -79,7 +79,7 @@ for i in range(99):
     neuron_producing = Neuron('mc', i, ex_settings, 'off')
     mc.append(neuron_producing)
     neuron_producing.stim_source = source_producing
-    source_producing.connect(neuron_producing)
+    source_producing.connect(neuron_producing, 0.0, 0.3+0.4*random.random())
     noise_pos.connect(neuron_producing)
     noise_neg.connect(neuron_producing)
 
@@ -99,6 +99,11 @@ if inhi == 'on':
             for g in mc[i].dendrites.keys():
                 if g in gc:
                     mc[i].dendrites[g] = setting_weights[i][gc.index(g)]
+
+        stim_weights_file = open('trained_stim_weights.txt', 'r')
+        stim_weights = pickle.load(stim_weights_file)
+        for i in range(99):
+            mc[i].dendrites[mc[i].stim_source] = stim_weights[i]
 
 all_neuron = mc + gc + source + noise
 
@@ -123,7 +128,7 @@ for i in range(99):
     outfile.close()
     source_outfile.close()
 
-exit()
+#exit()
 x = list(range(len(mc[1].value_record)))
 
 valen = len(gc[1].value_record)
