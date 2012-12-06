@@ -142,7 +142,7 @@ class LIF_STDP_Neuron(Neuron):
             if self.dendrites[source] > 1.0:
                 self.dendrites[source] = 1.0
             if self.stim_source != None:
-                self.dendrites[self.stim_source] -= self.right_learning_rate/15.0
+                self.dendrites[self.stim_source] -= self.right_learning_rate/20.0
                 if self.dendrites[self.stim_source] < 0.0:
                     self.dendrites[self.stim_source] = 0.0
             else:
