@@ -1,8 +1,6 @@
 import math
 import pickle
 import os.path
-#import numpy
-#import matplotlib.pyplot as plot
 from itertools import imap
 
 
@@ -33,75 +31,39 @@ def calculate_corr(a, b, bin_size):
     temp_b = split_into_bins(b, bin_size)
     return pearsonr(temp_a, temp_b)
 
-if os.path.isfile('mac'):
-    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200]
-elif os.path.isfile('cluster'):
-    bin_ops = [1, 2, 4, 6, 8, 10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000]
+bin = 200
 
-avg_inhib_corr = [0.0] * len(bin_ops)
-avg_no_inhib_corr = [0.0] * len(bin_ops)
-best_inhib_corr = [0.0] * len(bin_ops)
-best_no_inhib_corr = [0.0] *len(bin_ops)
-total = 0.0
-inhib_total = 0.0
 
-decorrelation_matrix_no_inhi = [[1.0] * 99 for i in range(99)]
-decorrelation_matrix_inhi = [[1.0] * 99 for i in range(99)]
+decorrelation_matrix_ni = [[1.0] * 99 for i in range(99)]
+decorrelation_matrix_ri = [[1.0] * 99 for i in range(99)]
+decorrelation_matrix_ti = [[1.0] * 99 for i in range(99)]
 
 for i in range(99):
     for j in range(i+1, 99):
-        total += 1.0
-        print(i, j)
-        raw_inhib_a = [float(line) for line in open('spikes_record/'+str(i)+'_inhib_on.txt', 'r')]
-        raw_inhib_b = [float(line) for line in open('spikes_record/'+str(j)+'_inhib_on.txt', 'r')]
-        raw_no_inhib_a = [float(line) for line in open('spikes_record/'+str(i)+'_inhib_off.txt', 'r')]
-        raw_no_inhib_b = [float(line) for line in open('spikes_record/'+str(j)+'_inhib_off.txt', 'r')]
+        raw_ti = [float(line) for line in open('spikes_record/'+str(i)+'a_on_trained.txt', 'r')]
+        raw_ri = [float(line) for line in open('spikes_record/'+str(i)+'a_on_random.txt', 'r')]
+        raw_ni = [float(line) for line in open('spikes_record/'+str(i)+'a_off_off.txt', 'r')]
 
-        no_inhib_corr = []
-        inhib_corr = []
+        raw_ti_b = [float(line) for line in open('spikes_record/'+str(j)+'a_on_trained.txt', 'r')]
+        raw_ri_b = [float(line) for line in open('spikes_record/'+str(j)+'a_on_random.txt', 'r')]
+        raw_ni_b = [float(line) for line in open('spikes_record/'+str(j)+'a_off_off.txt', 'r')]
 
-        for bin_size in bin_ops:
-            no_inhib_corr.append(calculate_corr(raw_no_inhib_a, raw_no_inhib_b, bin_size)) 
-            inhib_corr.append(calculate_corr(raw_inhib_a, raw_inhib_b, bin_size)) 
 
-        decorrelation_matrix_inhi[i][j] = inhib_corr[-1]
-        decorrelation_matrix_inhi[j][i] = inhib_corr[-1]
-        decorrelation_matrix_no_inhi[i][j] = no_inhib_corr[-1]
-        decorrelation_matrix_no_inhi[j][i] = no_inhib_corr[-1]
+        ni_corr = (calculate_corr(raw_ni, raw_ni_b, bin)) 
+        ti_corr = (calculate_corr(raw_ti, raw_ti_b, bin)) 
+        ri_corr = (calculate_corr(raw_ri, raw_ri_b, bin)) 
+
+        decorrelation_matrix_ni[i][j] = ni_corr
+        decorrelation_matrix_ni[j][i] = ni_corr
+        decorrelation_matrix_ti[i][j] = ti_corr
+        decorrelation_matrix_ti[j][i] = ti_corr
+        decorrelation_matrix_ri[i][j] = ri_corr
+        decorrelation_matrix_ri[j][i] = ri_corr
         
-        limlen = len(bin_ops)
-        for k in range(limlen):
-            avg_no_inhib_corr[k] += no_inhib_corr[k]
-            avg_inhib_corr[k] += inhib_corr[k]
-        inhib_total += 1.0
-        #if no_inhib_corr[limlen-1] > inhib_corr[limlen-1] and inhib_corr[2] > no_inhib_corr[2]:
-            #for k in range(limlen):
-                #avg_inhib_corr[k] += inhib_corr[k]
-            #inhib_total += 1.0
 
 
+pickle.dump(decorrelation_matrix_ni, open('matrix_ni_'+str(bin)+'.txt', 'w'))
+pickle.dump(decorrelation_matrix_ti, open('matrix_ti_'+str(bin)+'.txt', 'w'))
+pickle.dump(decorrelation_matrix_ri, open('matrix_ri_'+str(bin)+'.txt', 'w'))
 
-print(total, inhib_total)
-
-for i in range(len(bin_ops)):
-    avg_inhib_corr[i] /= inhib_total
-    avg_no_inhib_corr[i] /= total
-
-stat_net_result_no_in = open('stat_net_result_no_in.txt', 'w')
-for i in avg_no_inhib_corr:
-    stat_net_result_no_in.write(str(i)+'\n')
-stat_net_result_no_in.close()
-stat_net_result_in = open('stat_net_result_in.txt', 'w')
-for i in avg_inhib_corr:
-    stat_net_result_in.write(str(i)+'\n')
-stat_net_result_in.close()
-
-pickle.dump(decorrelation_matrix_inhi, open('decorr_matrix_in.txt', 'w'))
-pickle.dump(decorrelation_matrix_no_inhi, open('decorr_matrix_no_in.txt', 'w'))
-
-
-
-#x = range(len(bin_ops))
-#plot.plot(x, avg_no_inhib_corr,'-', x, avg_inhib_corr, '.-')
-##plot.plot(x, no_inhib_corr)
-#plot.show()
+print(decorrelation_matrix_ti)
