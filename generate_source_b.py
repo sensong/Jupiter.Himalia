@@ -33,3 +33,5 @@ source_b = pickle.load(open('source_pattern_b.txt', 'r'))
 result_file = open('result.txt', 'a')
 result_file.write('source corr: '+str(pearsonr(source_a, source_b))+'\n')
 result_file.close()
+
+print(pearsonr(source_a, source_b))
