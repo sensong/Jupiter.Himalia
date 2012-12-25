@@ -225,38 +225,41 @@ for i in range(line_number):
 
 
 #plot 6: Sparsity
-p6file = open('final_result.txt', 'r')
+p6file = open('sparsity.txt', 'r')
 p6raw = []
 for str in p6file.readlines():
     p6raw.append([float(number) for number in str.split()])
 
 colors_order = []
-for i in range(len(p6raw)):
+for i in range(30):
     random_color = []
     for i in range(3):
         random_color.append(random.random())
     colors_order.append(random_color)
 
 ax6.set_xlim(0, 5)
-ax6.set_ylim(-0.2, 1)
+ax6.set_ylim(-1.6, 0.2)
 ax6.xaxis.set_major_locator(MaxNLocator(5))
-ax6.yaxis.set_major_locator(MaxNLocator(8))
+ax6.yaxis.set_major_locator(MaxNLocator(9))
 ax6.set_xticklabels(['', 'NI', 'RI', 'TI\n(F)', 'TI\n(N)'])
-ax6.set_yticks([-0.2, 0, 0.2, .4, .6, .8, 1.0])
-ax6.set_yticklabels(['-0.2', 0, 0.2, 0.4, 0.6, 0.8, 1])
+ax6.set_yticks([i-1.2 for i in [-0.4, 0, .4, .8, 1.2]])
+ax6.set_yticklabels([i-1.2 for i in [-0.4, 0, .4, .8, 1.2]])
 for tick in ax6.xaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
 for tick in ax6.yaxis.get_major_ticks():
     tick.label.set_fontsize(6) 
-x = [1, 2, 3]
+x = [1, 2, 3, 4]
 co = 0
 for i in p6raw:
     ax6.plot(x, i, color=colors_order[co], linewidth=0.5, zorder=0.8)
     ax6.plot([x[0]], [i[0]], '^', color=colors_order[co], zorder=0.4)
     ax6.plot([x[1]], [i[1]], 's', color=colors_order[co], zorder=0.4)
     ax6.plot([x[2]], [i[2]], 'o', color=colors_order[co], zorder=0.4)
+    ax6.plot([x[3]], [i[3]], 'd', color=colors_order[co], zorder=0.4)
     co += 1
-avg_bar = [0.398660584, 0.319721684, 0.236385816]
+ax6.plot([0, 5], [0, 0], 'k:', linewidth=0.4, zorder=0.3)
+ax6.plot([0, 5], [-1, -1], 'k:', linewidth=0.4, zorder=0.3)
+avg_bar = [-1.04966028654, -0.832271341585, -0.666620411041, -0.659609768233]
 x_offset = [i-0.3 for i in x]
 avg_offset = [i-0.02 for i in avg_bar]
 for (i, j) in zip(x_offset, avg_offset):
@@ -266,32 +269,36 @@ ax6.yaxis.set_label_text('Sparsity', fontsize=axis_labelsize)
 
 #plot 7: statistics of decorrelation
 
-p7file = open('final_result.txt', 'r')
+p7file = open('correlation.txt', 'r')
 p7raw = []
 for str in p7file.readlines():
     p7raw.append([float(number) for number in str.split()])
 p7file.close()
 
 ax7.set_xlim(0, 4)
-ax7.set_ylim(-0.2, 1)
+ax7.set_ylim(-0.3, 1)
 ax7.xaxis.set_major_locator(MaxNLocator(4))
 ax7.yaxis.set_major_locator(MaxNLocator(8))
 ax7.set_xticklabels(['', 'NI', 'RI', 'TI'])
 ax7.set_yticks([-0.2, 0, 0.2, .4, .6, .8, 1.0])
 ax7.set_yticklabels(['-0.2', 0, 0.2, 0.4, 0.6, 0.8, 1])
+#ax7.set_yticks([-.4, -0.2, 0, 0.2, .4, .6, .8, 1.0])
+#ax7.set_yticklabels(['-0.4', '-0.2', 0, 0.2, 0.4, 0.6, 0.8, 1])
 for tick in ax7.xaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
 for tick in ax7.yaxis.get_major_ticks():
     tick.label.set_fontsize(6) 
 x = [1, 2, 3]
 co = 0
-for i in p6raw:
+for i in p7raw:
     ax7.plot(x, i, color=colors_order[co], linewidth=0.5, zorder=0.8)
     ax7.plot([x[0]], [i[0]], '^', color=colors_order[co], zorder=0.4)
     ax7.plot([x[1]], [i[1]], 's', color=colors_order[co], zorder=0.4)
     ax7.plot([x[2]], [i[2]], 'o', color=colors_order[co], zorder=0.4)
     co += 1
-avg_bar = [0.398660584, 0.319721684, 0.236385816]
+ax7.plot([0, 4], [0, 0], 'k:', linewidth=0.4, zorder=0.3)
+ax7.plot([0, 4], [0.5, 0.5], 'k:', linewidth=0.4, zorder=0.3)
+avg_bar = [0.447647645938, 0.419122763547, 0.279018582476]
 x_offset = [i-0.3 for i in x]
 avg_offset = [i-0.02 for i in avg_bar]
 for (i, j) in zip(x_offset, avg_offset):
