@@ -1,5 +1,6 @@
 for ((i=1;i<=500;i++)) 
-do  
+do 
+    python2.7 generate_source_b.py 
     python2.7 train.py
     python2.7 test_net.py a on trained
     python2.7 test_net.py a on random
