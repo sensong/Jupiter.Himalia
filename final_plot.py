@@ -168,7 +168,7 @@ ax2.grid(True)
 
 trains = []
 for i in range(line_number):
-    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'b_off_off.txt', 'r')][:duration]
+    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'a_off_off.txt', 'r')][:duration]
     trains.append(convert_scale(raw_list, i))
 
 x = list(range(len(trains[0])))
@@ -184,7 +184,7 @@ ax3.grid(True)
 
 trains = []
 for i in range(line_number):
-    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'b_on_random.txt', 'r')][:duration]
+    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'a_on_random.txt', 'r')][:duration]
     trains.append(convert_scale(raw_list, i))
 
 x = list(range(len(trains[0])))
@@ -216,7 +216,7 @@ ax5.grid(True)
 
 trains = []
 for i in range(line_number):
-    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'b_on_trained.txt', 'r')][:duration]
+    raw_list = [float(line) for line in open('spikes_record/'+str(i)+'a_on_trained.txt', 'r')][:duration]
     trains.append(convert_scale(raw_list, i))
 
 x = list(range(len(trains[0])))
