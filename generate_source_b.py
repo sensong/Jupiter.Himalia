@@ -32,6 +32,19 @@ bfile = open('source_pattern_b.txt', 'w')
 pickle.dump(source_b, bfile)
 bfile.close()
 
+a_arc = open('raw_data/source_pattern_a.txt','a')
+for i in source_a:
+	a_arc.write(str(i)+' ')
+a_arc.write('\n')
+a_arc.close()
+b_arc = open('raw_data/source_pattern_b.txt','a')
+for i in source_b:
+	b_arc.write(str(i)+' ')
+b_arc.write('\n')
+b_arc.close()
+
+
+
 result_file = open('result.txt', 'a')
 result_file.write('source corr: '+str(pearsonr(source_a, source_b))+'\n')
 result_file.close()

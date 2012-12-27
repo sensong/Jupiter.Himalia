@@ -89,8 +89,22 @@ if inhi == 'on':
         gc.append(neuron_producing)
         for inhibitee in connections_list[i]:
             mc[inhibitee].connect(neuron_producing)
-            neuron_producing.connect(mc[inhibitee], 0.0, 0.3+0.7*random.random())
+            neuron_producing.connect(mc[inhibitee], 0.0, 0.6+1.4*random.random())
 
+    if is_trained == 'random':
+        weights_file = open('trained_weights.txt', 'r')
+        setting_weights = pickle.load(weights_file)
+	shuffle_weights = []
+	for i in setting_weights:
+		shuffle_weights += i
+	random.shuffle(shuffle_weights)
+	random.shuffle(shuffle_weights)
+	wi = 0
+        for i in range(99):
+            for g in mc[i].dendrites.keys():
+                if g in gc:
+                    mc[i].dendrites[g] = shuffle_weights[wi]
+		    wi += 1
     if is_trained == 'trained':
         weights_file = open('trained_weights.txt', 'r')
         setting_weights = pickle.load(weights_file)
